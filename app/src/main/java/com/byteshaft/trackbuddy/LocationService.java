@@ -3,16 +3,13 @@ package com.byteshaft.trackbuddy;
 
 import android.location.Location;
 
-        import android.app.Service;
         import android.content.Context;
-        import android.content.Intent;
         import android.location.LocationListener;
         import android.location.LocationManager;
         import android.os.Bundle;
-        import android.os.IBinder;
         import android.widget.Toast;
 
-public class LocationService extends Service implements LocationListener {
+public class LocationService implements LocationListener {
 
     Location location;
 
@@ -39,12 +36,12 @@ public class LocationService extends Service implements LocationListener {
 
     public Location getLocation() {
         try {
-            locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+            locationManager = (LocationManager) context.getSystemService(context.LOCATION_SERVICE);
             isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             isNetworkEnabled = locationManager.isProviderEnabled((LocationManager.NETWORK_PROVIDER));
 
             if (!isGPSEnabled && !isNetworkEnabled) {
-                Toast.makeText(getApplicationContext(), "GPS is turned off", Toast.LENGTH_LONG).show();
+                Toast.makeText(context.getApplicationContext(), "GPS is turned off", Toast.LENGTH_LONG).show();
 
             } else {
                 this.canGetLocation = true;
@@ -125,9 +122,5 @@ public class LocationService extends Service implements LocationListener {
 
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
 }
 
