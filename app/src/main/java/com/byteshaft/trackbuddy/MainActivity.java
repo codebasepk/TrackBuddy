@@ -41,6 +41,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
             case R.id.sendButton:
                 sendSms(mEditText.getText().toString(), mEditText2.getText().toString());
                 mEditText.getText().clear();
+                mEditText2.getText().clear();
         }
         switch (v.getId()) {
             case R.id.locationButton:
