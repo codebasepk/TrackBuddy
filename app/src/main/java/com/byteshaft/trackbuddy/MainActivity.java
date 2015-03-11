@@ -15,8 +15,6 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     Button locationBTN;
     static EditText mEditText;
     static EditText mEditText2;
-    static double latitude;
-    static double longitude;
 
 
     @Override
@@ -46,18 +44,17 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
                 sendSms(mEditText.getText().toString(), mEditText2.getText().toString());
                 mEditText.getText().clear();
                 mEditText2.getText().clear();
-        }
-        switch (v.getId()) {
-            case R.id.locationButton:
-                LocationService gps = new LocationService(getApplicationContext());
-                gps.getLocation();
-                if(gps.canGetLocation){
-                 latitude = gps.getLatitude();
-                 longitude = gps.getLongitude();
+//        }
+//        switch (v.getId()) {
+//            case R.id.locationButton:
+//                LocationService gps = new LocationService(getApplicationContext());
+//                gps.getLocation();
+//                //if(gps.canGetLocation){
+//                 latitude = gps.getLatitude();
+//                 longitude = gps.getLongitude();
 
                 }
 
 
         }
     }
-}
