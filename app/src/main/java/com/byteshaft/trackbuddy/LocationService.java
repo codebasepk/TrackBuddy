@@ -7,23 +7,21 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.widget.Toast;
 
 public class LocationService extends ContextWrapper implements LocationListener {
 
     Location location;
 
     boolean isGPSEnabled = false;
-    boolean canGetLocation = false;
     boolean isNetworkEnabled = false;
 
-    double latitude;
-    double longitude;
+    static double latitude;
+    static double longitude;
 
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
     private static final long MIN_TIME_BW_UPDATES = 1000;
 
-    protected LocationManager locationManager;
+    public static LocationManager locationManager;
 
     public LocationService(Context context) {
         super(context);
@@ -38,12 +36,6 @@ public class LocationService extends ContextWrapper implements LocationListener 
             isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             isNetworkEnabled = locationManager.isProviderEnabled((LocationManager.NETWORK_PROVIDER));
 
-            if (!isGPSEnabled && !isNetworkEnabled) {
-                Toast.makeText(getApplicationContext(), "GPS is turned off", Toast.LENGTH_LONG).show();
-
-            } else {
-                this.canGetLocation = true;
-            }
 
             if (isNetworkEnabled) {
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
@@ -69,14 +61,12 @@ public class LocationService extends ContextWrapper implements LocationListener 
 
                     if (locationManager != null) {
                         location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
+                        System.out.println("Shiii");
                         if(location != null) {
                             latitude = location.getLatitude();
                             longitude = location.getLongitude();
                         }
                     }
-
-
                 }
             }
 
@@ -102,22 +92,15 @@ public class LocationService extends ContextWrapper implements LocationListener 
 
     @Override
     public void onLocationChanged(Location location) {
-
     }
-
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-
     }
-
     @Override
     public void onProviderEnabled(String provider) {
-
     }
-
     @Override
     public void onProviderDisabled(String provider) {
-
     }
 
 }
