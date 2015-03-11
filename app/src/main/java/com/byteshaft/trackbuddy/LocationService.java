@@ -1,19 +1,17 @@
 
 package com.byteshaft.trackbuddy;
 
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.widget.Toast;
 
-        import android.content.Context;
-        import android.location.LocationListener;
-        import android.location.LocationManager;
-        import android.os.Bundle;
-        import android.widget.Toast;
-
-public class LocationService implements LocationListener {
+public class LocationService extends ContextWrapper implements LocationListener {
 
     Location location;
-
-    private final Context context;
 
     boolean isGPSEnabled = false;
     boolean canGetLocation = false;
@@ -28,7 +26,7 @@ public class LocationService implements LocationListener {
     protected LocationManager locationManager;
 
     public LocationService(Context context) {
-        this.context = context;
+        super(context);
         getLocation();
     }
 
@@ -36,12 +34,12 @@ public class LocationService implements LocationListener {
 
     public Location getLocation() {
         try {
-            locationManager = (LocationManager) context.getSystemService(context.LOCATION_SERVICE);
+            locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
             isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
             isNetworkEnabled = locationManager.isProviderEnabled((LocationManager.NETWORK_PROVIDER));
 
             if (!isGPSEnabled && !isNetworkEnabled) {
-                Toast.makeText(context.getApplicationContext(), "GPS is turned off", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "GPS is turned off", Toast.LENGTH_LONG).show();
 
             } else {
                 this.canGetLocation = true;

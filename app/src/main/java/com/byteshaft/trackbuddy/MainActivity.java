@@ -3,6 +3,7 @@ package com.byteshaft.trackbuddy;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.telephony.SmsMessage;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,8 +13,10 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
 
     Button sendBTN;
     Button locationBTN;
-    EditText mEditText;
-    EditText mEditText2;
+    static EditText mEditText;
+    static EditText mEditText2;
+    static double latitude;
+    static double longitude;
 
 
     @Override
@@ -33,6 +36,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
     private void sendSms(String number, String txt) {
         SmsManager smsManager = SmsManager.getDefault();
         smsManager.sendTextMessage(number, null, txt, null, null);
+
     }
 
     @Override
@@ -45,14 +49,14 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         }
         switch (v.getId()) {
             case R.id.locationButton:
-                LocationService gps = new LocationService(MainActivity.this);
+                LocationService gps = new LocationService(getApplicationContext());
                 gps.getLocation();
                 if(gps.canGetLocation){
-                    double latitude = gps.getLatitude();
-                    double longitude = gps.getLongitude();
+                 latitude = gps.getLatitude();
+                 longitude = gps.getLongitude();
 
-                    mEditText2.setText("https://maps.google.com/maps?q=" + latitude + "," + longitude);
                 }
+
 
         }
     }
