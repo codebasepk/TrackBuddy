@@ -37,7 +37,7 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
             gps.isLocationServiceAvailable();
 
             if (!gps.isNetworkEnabled && !gps.isGPSEnabled) {
-                sms.sendTextMessage(phoneNumber, null, "TrackBuddy: Location Service of the Target Device is Disabled.", null, null);
+                sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nLocation Service of the target device is Disabled.", null, null);
                 System.out.println("GPS Disabled. Sending SMS...");
             } else {
                 mGoogleApiClient = new GoogleApiClient.Builder(context)
@@ -60,7 +60,7 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
                 int counter = 0;
                 do {
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -75,10 +75,10 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
                     if (mLocation != null) {
                         String lat = String.valueOf(mLocation.getLatitude());
                         String lon = String.valueOf(mLocation.getLongitude());
-                        sms.sendTextMessage(phoneNumber, null, "TrackBuddy: " + "https://maps.google.com/maps?q=" + lat + "," + lon, null, null);
+                        sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\n" + "https://maps.google.com/maps?q=" + lat + "," + lon, null, null);
                         System.out.println("Location acquired. Sending SMS...");
                     } else {
-                        sms.sendTextMessage(phoneNumber, null, "TrackBuddy: " + "Device cannot be located at the moment.", null, null);
+                        sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\n" + "Device cannot be located at the moment.\n\nMake sure the Location Service of the target device is on High Accuracy mode.", null, null);
                         System.out.println("Device cannot be Located. Sending SMS...");
                     }
             }
