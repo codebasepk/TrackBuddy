@@ -3,54 +3,96 @@ package com.byteshaft.trackbuddy;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.location.Location;
-import android.media.browse.MediaBrowser;
-import android.nfc.Tag;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
 
-public class SMSManager extends BroadcastReceiver {
+public class SMSManager extends BroadcastReceiver implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private static final String clipBoard = "BUDDY";
+    private static final String clipBoard = "Message Received: ";
     SmsMessage message = null;
-    private String phoneNumber;
     SmsManager sms = SmsManager.getDefault();
+    LocationService gps;
+    private String phoneNumber;
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
 
     public void onReceive(Context context, Intent intent) {
-        LocationService gps = new LocationService(context);
+        gps = new LocationService(context);
         Bundle bundle = intent.getExtras();
         Object[] pdus = (Object[]) bundle.get("pdus");
         message = SmsMessage.createFromPdu((byte[]) pdus[0]);
 
         Log.i(clipBoard, message.getMessageBody());
-        if (message.getMessageBody().contains("TB007")) {
+        if (message.getMessageBody().contentEquals("TB007")) {
             phoneNumber = message.getOriginatingAddress();
-            gps.getLocation();
+            gps.isLocationServiceAvailable();
 
             if (!gps.isNetworkEnabled && !gps.isGPSEnabled) {
-               sms.sendTextMessage(phoneNumber, null, "TrackBuddy: Location Service of the Target Device is Disabled.", null, null);
-            }
-            else {
-                LocationService.latitude = gps.getLatitude();
-                LocationService.longitude = gps.getLongitude();
-
-
-                if (LocationService.latitude == 0.0) {
-                   sms.sendTextMessage(phoneNumber, null, "TrackBuddy: Target Device can't be Located at the moment.", null, null);
-                } else {
-                    sms.sendTextMessage(phoneNumber, null, "TrackBuddy: " + "https://maps.google.com/maps?q=" + LocationService.latitude + "," + LocationService.longitude, null, null);
-                    System.out.println(LocationService.latitude);
-                }
+                sms.sendTextMessage(phoneNumber, null, "TrackBuddy: Location Service of the Target Device is Disabled.", null, null);
+                System.out.println("GPS Disabled. Sending SMS...");
+            } else {
+                mGoogleApiClient = new GoogleApiClient.Builder(context)
+                        .addConnectionCallbacks(this)
+                        .addOnConnectionFailedListener(this)
+                        .addApi(LocationServices.API)
+                        .build();
+                mGoogleApiClient.connect();
+                acquireLocation();
             }
         }
+    }
+
+    public void acquireLocation() {
+        System.out.println("Thread running...");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Location mLocation;
+                int counter = 0;
+                do {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                    counter++;
+                    System.out.println(counter);
+                    if (counter > 120 && mLocation == null) {
+                        break;
+                    }
+                } while (mLocation == null);
+                    if (mLocation != null) {
+                        String lat = String.valueOf(mLocation.getLatitude());
+                        String lon = String.valueOf(mLocation.getLongitude());
+                        sms.sendTextMessage(phoneNumber, null, "TrackBuddy: " + "https://maps.google.com/maps?q=" + lat + "," + lon, null, null);
+                        System.out.println("Location acquired. Sending SMS...");
+                    } else {
+                        sms.sendTextMessage(phoneNumber, null, "TrackBuddy: " + "Device cannot be located at the moment.", null, null);
+                        System.out.println("Device cannot be Located. Sending SMS...");
+                    }
+            }
+        }).start();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+    }
+    @Override
+    public void onConnectionSuspended(int i) {
+    }
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
     }
 }
 
