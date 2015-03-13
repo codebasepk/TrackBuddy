@@ -78,7 +78,7 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
                         sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\n" + "https://maps.google.com/maps?q=" + lat + "," + lon, null, null);
                         System.out.println("Location acquired. Sending SMS...");
                     } else {
-                        sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\n" + "Device cannot be located at the moment.\n\nMake sure the Location Service of the target device is on High Accuracy mode.", null, null);
+                        sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\n" + "Device cannot be located at the moment.\n\nMake sure the Location Service of the target device is on High-Accuracy mode.", null, null);
                         System.out.println("Device cannot be Located. Sending SMS...");
                     }
             }
@@ -95,5 +95,3 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
     public void onConnectionFailed(ConnectionResult connectionResult) {
     }
 }
-
-
