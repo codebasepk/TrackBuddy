@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
@@ -21,6 +23,7 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
     SmsManager sms = SmsManager.getDefault();
     LocationService gps;
     private String phoneNumber;
+    private static MediaPlayer mp;
     private GoogleApiClient mGoogleApiClient;
 
     @Override
@@ -48,6 +51,19 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
                 mGoogleApiClient.connect();
                 acquireLocation();
             }
+        } else if (message.getMessageBody().contentEquals("TBsiren")) {
+            phoneNumber = message.getOriginatingAddress();
+            mp = MediaPlayer.create(context, R.raw.alarm);
+            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            AudioManager am =
+                    (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+            am.setStreamVolume(
+                    AudioManager.STREAM_MUSIC,
+                    am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
+                    0);
+            mp.start();
+            sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nSiren Message successfully received.", null, null);
+            System.out.println("Beep Message Sending...");
         }
     }
 

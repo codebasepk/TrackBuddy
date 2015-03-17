@@ -6,13 +6,32 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@android:id/text1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:paddingTop="30dp"
+        android:layout_marginTop="8dp"
         android:text="SMS Codes:"
-        android:textSize="30dp"
+        android:textSize="35dp"
         android:textStyle="bold"
+        android:textColor="#000000"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="46dp"
+        android:text="Tracker: TB007"
+        android:textSize="20dp"
+        android:textColor="#000000"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
+        android:text="Siren: TBsiren"
+        android:textSize="20dp"
         android:textColor="#000000"/>
 
     <ImageView
@@ -21,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:paddingBottom="120dp"
+        android:layout_marginBottom="110dp"
         />
 
 
@@ -31,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:paddingBottom="30dp"
+        android:layout_marginBottom="20dp"
         />
 
     <android.support.v4.widget.DrawerLayout
@@ -53,8 +72,5 @@
             android:dividerHeight="1dp"
             android:background="#000000" />
     </android.support.v4.widget.DrawerLayout>
-
-
-
 
 </RelativeLayout>
