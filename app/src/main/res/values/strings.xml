@@ -5,4 +5,14 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
+    <string name="drawer_open">Open Navigation Drawer</string>
+    <string name="drawer_close">Close Navigation Drawer</string>
+
+    <string-array name="items">
+
+        <item >Tracker</item>
+        <item >Siren</item>
+        <item >List</item>
+
+    </string-array>
 </resources>
