@@ -11,8 +11,9 @@
     <string-array name="items">
 
         <item >Tracker</item>
-        <item >Siren</item>
-        <item >List</item>
+        <item>Siren</item>
+        <item>Speed</item>
+        <item>List</item>
 
     </string-array>
 </resources>

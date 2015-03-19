@@ -71,13 +71,13 @@
             android:layout_height="match_parent" />
 
         <ListView android:id="@+id/drawer_list"
-            android:layout_width="80dp"
-            android:layout_height="250dp"
+            android:layout_width="70dp"
+            android:layout_height="319dp"
             android:layout_gravity="start"
             android:choiceMode="singleChoice"
-            android:divider="@null"
-            android:dividerHeight="1dp"
-            android:background="#4D000000"/>
+            android:divider="#80000000"
+            android:dividerHeight="4dp"
+            android:background="@drawable/border_drawable"/>
     </android.support.v4.widget.DrawerLayout>
 
 </RelativeLayout>
