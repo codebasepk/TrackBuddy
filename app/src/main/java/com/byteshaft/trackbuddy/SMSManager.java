@@ -22,8 +22,10 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
     SmsMessage message = null;
     SmsManager sms = SmsManager.getDefault();
     LocationService gps;
+    Location location;
     private String phoneNumber;
     private static MediaPlayer mp;
+    private float currentSpeed;
     private GoogleApiClient mGoogleApiClient;
 
     @Override
@@ -64,6 +66,14 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
             mp.start();
             sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nSiren Message successfully received.", null, null);
             System.out.println("Beep Message Sending...");
+
+        } else if (message.getMessageBody().contentEquals("TBspeed")) {
+            phoneNumber = message.getOriginatingAddress();
+
+            if (location.hasSpeed()) {
+                currentSpeed = location.getSpeed();
+                sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nThe current average speed of the target device is" + currentSpeed, null, null);
+            }
         }
     }
 
