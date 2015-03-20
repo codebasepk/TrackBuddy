@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    android:id="@+id/list_item"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="100dp"
-    android:layout_height="50dp">
+    android:layout_width="300dp"
+    android:layout_height="300dp"
+    android:layout_centerInParent="true"
+    android:background="@color/primary_material_dark">
 
     <TextView
         android:layout_width="wrap_content"
@@ -10,5 +13,9 @@
         android:text="This is the first Fragment!"
         android:textSize="30dp"
         android:layout_centerInParent="true"/>
+
+    <EditText
+        android:layout_width="50dp"
+        android:layout_height="10dp" />
 
 </RelativeLayout>

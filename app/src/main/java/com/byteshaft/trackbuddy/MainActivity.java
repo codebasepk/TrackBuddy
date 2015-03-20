@@ -1,9 +1,9 @@
 package com.byteshaft.trackbuddy;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -16,7 +16,8 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.Toast;
+
+import java.util.Locale;
 
 
 public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
@@ -25,6 +26,8 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     private ListView listView;
     private ActionBarDrawerToggle drawerListener;
     private MyAdapter myAdapter;
+
+    String[] items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +38,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         listView.setAdapter(myAdapter);
         listView.setOnItemClickListener(this);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        listView.setOnItemClickListener(new DrawerItemClickListener());
         drawerListener = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.drawer_close) {
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -50,8 +54,6 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         drawerLayout.setDrawerListener(drawerListener);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#B3000000")));
-
 
     }
 
@@ -78,21 +80,55 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         selectItem(position);
-
-
     }
 
     private void selectItem(int position) {
+        Fragment fragment = new ItemsFragment();
+        Bundle args = new Bundle();
+        args.putInt(ItemsFragment.ARG_PLANET_NUMBER, position);
+        fragment.setArguments(args);
+
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+
         listView.setItemChecked(position, true);
+        setTitle(items[position]);
+        drawerLayout.closeDrawer(listView);
+    }
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView parent, View view, int position, long id) {
+            selectItem(position);
+        }
     }
 
 
+    public static class ItemsFragment extends Fragment {
+        public static final String ARG_PLANET_NUMBER = "planet_number";
+        public ItemsFragment() {
+
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_one, container, false);
+            int i = getArguments().getInt(ARG_PLANET_NUMBER);
+            String item = getResources().getStringArray(R.array.items)[i];
+
+            int imageId = getResources().getIdentifier(item.toLowerCase(Locale.getDefault()),
+                    "drawable", getActivity().getPackageName());
+//            ((ImageView) rootView.findViewById(R.id.list_item)).setImageResource(imageId);
+            getActivity().setTitle(item);
+            return rootView;
+        }
+    }
 
 
     class MyAdapter extends BaseAdapter {
 
         private Context context;
-        String[] items;
         int[] images = {R.drawable.ic_tracker, R.drawable.ic_siren, R.drawable.ic_speed, R.drawable.ic_list};
 
         public MyAdapter(Context context) {
@@ -115,7 +151,6 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             return position;
         }
 
-
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View row = null;
@@ -130,4 +165,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             return row;
         }
     }
+
 }
+
+
