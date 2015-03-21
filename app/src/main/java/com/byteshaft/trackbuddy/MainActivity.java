@@ -1,5 +1,6 @@
 package com.byteshaft.trackbuddy;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -20,7 +21,7 @@ import android.widget.ListView;
 import java.util.Locale;
 
 
-public class MainActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
+public class MainActivity extends ActionBarActivity implements ListView.OnItemClickListener {
 
     private DrawerLayout drawerLayout;
     private ListView listView;
@@ -38,7 +39,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
         listView.setAdapter(myAdapter);
         listView.setOnItemClickListener(this);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        listView.setOnItemClickListener(new DrawerItemClickListener());
+        listView.setOnItemClickListener(this);
         drawerListener = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.drawer_close) {
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -49,6 +50,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
             public void onDrawerClosed(View drawerView) {
 
                 super.onDrawerClosed(drawerView);
+                System.out.println("oyoyo");
             }
         };
         drawerLayout.setDrawerListener(drawerListener);
@@ -80,49 +82,26 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         selectItem(position);
+        switch (position) {
+            case 0:
+                showDialog();
+        }
+        System.out.println("ok");
     }
 
     private void selectItem(int position) {
-        Fragment fragment = new ItemsFragment();
-        Bundle args = new Bundle();
-        args.putInt(ItemsFragment.ARG_PLANET_NUMBER, position);
-        fragment.setArguments(args);
-
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 
         listView.setItemChecked(position, true);
         setTitle(items[position]);
         drawerLayout.closeDrawer(listView);
     }
 
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-        public void onItemClick(AdapterView parent, View view, int position, long id) {
-            selectItem(position);
-        }
-    }
-
-
-    public static class ItemsFragment extends Fragment {
-        public static final String ARG_PLANET_NUMBER = "planet_number";
-        public ItemsFragment() {
-
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_one, container, false);
-            int i = getArguments().getInt(ARG_PLANET_NUMBER);
-            String item = getResources().getStringArray(R.array.items)[i];
-
-            int imageId = getResources().getIdentifier(item.toLowerCase(Locale.getDefault()),
-                    "drawable", getActivity().getPackageName());
-//            ((ImageView) rootView.findViewById(R.id.list_item)).setImageResource(imageId);
-            getActivity().setTitle(item);
-            return rootView;
-        }
+    private void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.fragment_one, null));
+        builder.create();
+        builder.show();
     }
 
 
@@ -153,7 +132,7 @@ public class MainActivity extends ActionBarActivity implements AdapterView.OnIte
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View row = null;
+            View row;
             if (convertView == null) {
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 row = inflater.inflate(R.layout.drawer_layout, parent, false);
