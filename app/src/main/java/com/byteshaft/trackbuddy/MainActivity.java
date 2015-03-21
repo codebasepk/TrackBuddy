@@ -1,9 +1,11 @@
 package com.byteshaft.trackbuddy;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
@@ -17,6 +19,8 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+
+import com.google.android.gms.analytics.Tracker;
 
 import java.util.Locale;
 
@@ -82,11 +86,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         selectItem(position);
-        switch (position) {
-            case 0:
-                showDialog();
-        }
-        System.out.println("ok");
+        popDialog(position);
     }
 
     private void selectItem(int position) {
@@ -96,12 +96,28 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         drawerLayout.closeDrawer(listView);
     }
 
-    private void showDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = getLayoutInflater();
-        builder.setView(inflater.inflate(R.layout.fragment_one, null));
-        builder.create();
-        builder.show();
+    private void popDialog(int Frag) {
+        final Dialog dialog = new Dialog(this);
+        switch (Frag) {
+            case 0:
+                dialog.setTitle("Tracker");
+                dialog.setContentView(R.layout.fragment_one);
+                break;
+            case 1:
+                dialog.setTitle("Siren");
+                dialog.setContentView(R.layout.fragment_two);
+                break;
+            case 2:
+                dialog.setTitle("Speed");
+                dialog.setContentView(R.layout.fragment_three);
+                break;
+            case 3:
+                dialog.setTitle("Blacklist/Whitelist");
+                dialog.setContentView(R.layout.fragment_four);
+                break;
+        }
+
+        dialog.show();
     }
 
 
