@@ -37,7 +37,7 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
         message = SmsMessage.createFromPdu((byte[]) pdus[0]);
 
         Log.i(clipBoard, message.getMessageBody());
-        if (message.getMessageBody().contentEquals("TB007")) {
+        if (message.getMessageBody().contentEquals(MainActivity.variable)) {
             phoneNumber = message.getOriginatingAddress();
             gps.isLocationServiceAvailable();
 
