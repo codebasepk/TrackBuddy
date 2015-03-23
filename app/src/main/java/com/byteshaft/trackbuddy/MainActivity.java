@@ -1,11 +1,7 @@
 package com.byteshaft.trackbuddy;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
@@ -15,14 +11,15 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
-
-import com.google.android.gms.analytics.Tracker;
-
-import java.util.Locale;
+import android.widget.RelativeLayout;
 
 
 public class MainActivity extends ActionBarActivity implements ListView.OnItemClickListener {
@@ -31,7 +28,10 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     private ListView listView;
     private ActionBarDrawerToggle drawerListener;
     private MyAdapter myAdapter;
-
+    Button button;
+    EditText mEditText;
+    static String variable;
+    Dialog dialog;
     String[] items;
 
     @Override
@@ -96,24 +96,37 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         drawerLayout.closeDrawer(listView);
     }
 
-    private void popDialog(int Frag) {
-        final Dialog dialog = new Dialog(this);
-        switch (Frag) {
+    private void popDialog(int window) {
+        dialog = new Dialog(MainActivity.this, R.style.PauseDialog);
+        switch (window) {
             case 0:
                 dialog.setTitle("Tracker");
-                dialog.setContentView(R.layout.fragment_one);
+                LayoutInflater inflater = getLayoutInflater();
+                RelativeLayout relativeLayout = (RelativeLayout) inflater.inflate(R.layout.dialog_one, null);
+                button = (Button) relativeLayout.findViewById(R.id.applyButtonTracker);
+                mEditText = (EditText) relativeLayout.findViewById(R.id.editTextTracker);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                       variable = mEditText.getText().toString();
+                        System.out.println("Shiii");
+                        mEditText.getText().clear();
+
+                    }
+                });
+                dialog.setContentView(relativeLayout);
                 break;
             case 1:
                 dialog.setTitle("Siren");
-                dialog.setContentView(R.layout.fragment_two);
+                dialog.setContentView(R.layout.dialog_two);
                 break;
             case 2:
                 dialog.setTitle("Speed");
-                dialog.setContentView(R.layout.fragment_three);
+                dialog.setContentView(R.layout.dialog_three);
                 break;
             case 3:
                 dialog.setTitle("Blacklist/Whitelist");
-                dialog.setContentView(R.layout.fragment_four);
+                dialog.setContentView(R.layout.dialog_four);
                 break;
         }
 

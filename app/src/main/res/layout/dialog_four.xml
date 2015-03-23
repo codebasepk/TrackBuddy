@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@color/background_material_light">
+
+    <Switch
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/switchBlacklist" />
+
+    <EditText
+        android:layout_marginTop="10dp"
+        android:layout_width="260dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/switchBlacklist"
+        android:layout_centerHorizontal="true"
+        android:hint="Place Contacts to be Blacklisted."
+        android:id="@+id/editTextBlacklist"/>
+
+    <Switch
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/switchWhitelist"
+        android:layout_below="@+id/editTextBlacklist"/>
+
+
+    <EditText
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_width="260dp"
+        android:layout_height="40dp"
+        android:layout_below="@+id/switchWhitelist"
+        android:layout_centerHorizontal="true"
+        android:hint="Place Contacts to be Whitelisted."
+        android:id="@+id/editTextWhitelist"
+        android:layout_marginBottom="5dp"/>
+
+</RelativeLayout>
