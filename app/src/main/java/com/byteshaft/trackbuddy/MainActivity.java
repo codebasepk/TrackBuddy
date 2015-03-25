@@ -2,7 +2,9 @@ package com.byteshaft.trackbuddy;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -16,10 +18,15 @@ import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
+import android.widget.TextView;
+import android.widget.ToggleButton;
 
 
 public class MainActivity extends ActionBarActivity implements ListView.OnItemClickListener {
@@ -28,16 +35,31 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     private ListView listView;
     private ActionBarDrawerToggle drawerListener;
     private MyAdapter myAdapter;
-    Button button;
-    EditText mEditText;
-    static String variable;
+    Button trackerApplyButton;
+    Button sirenApplyButton;
+    EditText trackerEditText;
+    EditText sirenEditText;
+    SharedPreferences preferences;
+
+    String trackerVariable;
+    String sirenVariable;
     Dialog dialog;
     String[] items;
+    TextView trackerSMSCode;
+    TextView sirenSMSCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        trackerSMSCode = (TextView) findViewById(R.id.trackerSMSCode);
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        trackerVariable = preferences.getString("trackerVariablePrefs", "TBgps");
+        trackerSMSCode.setText("Tracker Code: " + trackerVariable);
+        sirenSMSCode = (TextView) findViewById(R.id.sirenSMSCode);
+        sirenVariable = preferences.getString("sirenVariablePrefs", "TBsiren");
+        sirenSMSCode.setText("Siren Code: " + sirenVariable);
         listView = (ListView) findViewById(R.id.drawer_list);
         myAdapter = new MyAdapter(this);
         listView.setAdapter(myAdapter);
@@ -98,27 +120,65 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
 
     private void popDialog(int window) {
         dialog = new Dialog(MainActivity.this, R.style.PauseDialog);
+
+
         switch (window) {
             case 0:
-                dialog.setTitle("Tracker");
-                LayoutInflater inflater = getLayoutInflater();
-                RelativeLayout relativeLayout = (RelativeLayout) inflater.inflate(R.layout.dialog_one, null);
-                button = (Button) relativeLayout.findViewById(R.id.applyButtonTracker);
-                mEditText = (EditText) relativeLayout.findViewById(R.id.editTextTracker);
-                button.setOnClickListener(new View.OnClickListener() {
+                LayoutInflater trackerInflater = getLayoutInflater();
+                RelativeLayout trackerRelativeLayout = (RelativeLayout) trackerInflater.inflate(R.layout.dialog_one, null);
+                final Switch trackerSwitch = (Switch) trackerRelativeLayout.findViewById(R.id.switchTracker);
+                boolean trackerPref = preferences.getBoolean("trackerPreference", true);
+                trackerSwitch.setChecked(trackerPref);
+                trackerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                        preferences.edit().putBoolean("trackerPreference", isChecked).apply();
+                        }
+                });
+
+                trackerApplyButton = (Button) trackerRelativeLayout.findViewById(R.id.applyButtonTracker);
+                trackerEditText = (EditText) trackerRelativeLayout.findViewById(R.id.editTextTracker);
+                trackerApplyButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                       variable = mEditText.getText().toString();
-                        System.out.println("Shiii");
-                        mEditText.getText().clear();
-
+                        trackerVariable = trackerEditText.getText().toString();
+                        trackerEditText.getText().clear();
+                        preferences.edit().putString("trackerVariablePrefs", trackerVariable).commit();
+                        trackerSMSCode.setText("Tracker Code: " + trackerVariable);
+                        dialog.dismiss();
                     }
                 });
-                dialog.setContentView(relativeLayout);
+                dialog.setTitle("Tracker");
+                dialog.setContentView(trackerRelativeLayout);
                 break;
             case 1:
-                dialog.setTitle("Siren");
-                dialog.setContentView(R.layout.dialog_two);
+                LayoutInflater sirenInflater = getLayoutInflater();
+                RelativeLayout sirenRelativeLayout = (RelativeLayout) sirenInflater.inflate(R.layout.dialog_two, null);
+                final Switch sirenSwitch = (Switch) sirenRelativeLayout.findViewById(R.id.switchSiren);
+                boolean sirenPref = preferences.getBoolean("sirenPreference", true);
+                sirenSwitch.setChecked(sirenPref);
+                sirenSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                        preferences.edit().putBoolean("sirenPreference", isChecked).apply();
+                    }
+                });
+
+                sirenApplyButton = (Button) sirenRelativeLayout.findViewById(R.id.applyButtonSiren);
+                sirenEditText = (EditText) sirenRelativeLayout.findViewById(R.id.editTextSiren);
+                sirenApplyButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        sirenVariable = sirenEditText.getText().toString();
+                        sirenEditText.getText().clear();
+                        preferences.edit().putString("sirenVariablePrefs", sirenVariable).commit();
+                        sirenSMSCode.setText("Siren Code: " + sirenVariable);
+                        dialog.dismiss();
+                    }
+                });
+                dialog.setContentView(sirenRelativeLayout);
                 break;
             case 2:
                 dialog.setTitle("Speed");
@@ -174,6 +234,9 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         }
     }
 
+    public void onResume() {
+        super.onResume();
+    }
 }
 
 

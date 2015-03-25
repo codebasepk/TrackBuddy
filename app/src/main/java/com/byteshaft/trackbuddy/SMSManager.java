@@ -3,10 +3,12 @@ package com.byteshaft.trackbuddy;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -21,6 +23,7 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
     private static final String clipBoard = "Message Received: ";
     SmsMessage message = null;
     SmsManager sms = SmsManager.getDefault();
+    Context mContext = null;
     LocationService gps;
     Location location;
     private String phoneNumber;
@@ -28,45 +31,66 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
     private float currentSpeed;
     private GoogleApiClient mGoogleApiClient;
 
+
     @Override
 
     public void onReceive(Context context, Intent intent) {
+
+        mContext = context;
         gps = new LocationService(context);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean trackerBool = preferences.getBoolean("trackerPreference", true);
+        boolean sirenBool = preferences.getBoolean("sirenPreference", true);
+
         Bundle bundle = intent.getExtras();
         Object[] pdus = (Object[]) bundle.get("pdus");
         message = SmsMessage.createFromPdu((byte[]) pdus[0]);
 
         Log.i(clipBoard, message.getMessageBody());
-        if (message.getMessageBody().contentEquals(MainActivity.variable)) {
+        if (message.getMessageBody().contentEquals(preferences.getString("trackerVariablePrefs", "TBgps"))) {
             phoneNumber = message.getOriginatingAddress();
-            gps.isLocationServiceAvailable();
 
-            if (!gps.isNetworkEnabled && !gps.isGPSEnabled) {
-                sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nLocation Service of the target device is Disabled.", null, null);
-                System.out.println("GPS Disabled. Sending SMS...");
+            if (trackerBool) {
+                gps.isLocationServiceAvailable();
+
+                if (!gps.isNetworkEnabled && !gps.isGPSEnabled) {
+                    sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nLocation Service of the target device is Disabled.", null, null);
+                    System.out.println("GPS Disabled. Sending SMS...");
+                } else {
+                    mGoogleApiClient = new GoogleApiClient.Builder(context)
+                            .addConnectionCallbacks(this)
+                            .addOnConnectionFailedListener(this)
+                            .addApi(LocationServices.API)
+                            .build();
+                    mGoogleApiClient.connect();
+                    acquireLocation();
+                }
+
             } else {
-                mGoogleApiClient = new GoogleApiClient.Builder(context)
-                        .addConnectionCallbacks(this)
-                        .addOnConnectionFailedListener(this)
-                        .addApi(LocationServices.API)
-                        .build();
-                mGoogleApiClient.connect();
-                acquireLocation();
-            }
-        } else if (message.getMessageBody().contentEquals("TBsiren")) {
-            phoneNumber = message.getOriginatingAddress();
-            mp = MediaPlayer.create(context, R.raw.alarm);
-            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            AudioManager am =
-                    (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-            am.setStreamVolume(
-                    AudioManager.STREAM_MUSIC,
-                    am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
-                    0);
-            mp.start();
-            sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nSiren Message successfully received.", null, null);
-            System.out.println("Beep Message Sending...");
+                sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nTracking Service of the target device is switched off by the user.", null, null);
+        System.out.println("TrackerSwitched OFF");
+                    }
 
+        } else if (message.getMessageBody().contentEquals(preferences.getString("sirenVariablePrefs", "TBsiren"))) {
+                phoneNumber = message.getOriginatingAddress();
+
+            if (sirenBool) {
+                mp = MediaPlayer.create(context, R.raw.alarm);
+                mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                AudioManager am =
+                        (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                am.setStreamVolume(
+                        AudioManager.STREAM_MUSIC,
+                        am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
+                        0);
+                mp.start();
+                sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nSiren Message successfully received.", null, null);
+                System.out.println("Beep Message Sending...");
+            } else {
+                System.out.println("Siren Switched OFF");
+                sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nSiren Service of the target device is switched off by the user.", null, null);
+
+            }
         } else if (message.getMessageBody().contentEquals("TBspeed")) {
             phoneNumber = message.getOriginatingAddress();
 
