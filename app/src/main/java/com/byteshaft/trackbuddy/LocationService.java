@@ -13,6 +13,7 @@ public class LocationService extends ContextWrapper implements LocationListener 
 
     boolean isGPSEnabled = false;
     boolean isNetworkEnabled = false;
+    static double speed;
 
     public static LocationManager locationManager;
 
@@ -33,6 +34,7 @@ public class LocationService extends ContextWrapper implements LocationListener 
 
     @Override
     public void onLocationChanged(Location location) {
+       speed = location.getSpeed();
     }
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
