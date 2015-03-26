@@ -9,6 +9,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,11 +50,13 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     TextView trackerSMSCode;
     TextView sirenSMSCode;
 
+    Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        getSupportActionBar().setTitle("Home");
         trackerSMSCode = (TextView) findViewById(R.id.trackerSMSCode);
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         trackerVariable = preferences.getString("trackerVariablePrefs", "TBgps");
@@ -66,6 +70,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         listView.setOnItemClickListener(this);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         listView.setOnItemClickListener(this);
+
         drawerListener = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.drawer_close) {
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -139,6 +144,8 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
 
                 trackerApplyButton = (Button) trackerRelativeLayout.findViewById(R.id.applyButtonTracker);
                 trackerEditText = (EditText) trackerRelativeLayout.findViewById(R.id.editTextTracker);
+                setOnTextChangeListenerForInputField(trackerEditText);
+                setOnClickListenerForEditText(trackerEditText);
                 trackerApplyButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -234,9 +241,46 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         }
     }
 
-    public void onResume() {
-        super.onResume();
+    private void setOnTextChangeListenerForInputField(final EditText editText) {
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (editText.getText().toString().equals("TB")) {
+                    return;
+                }
+                if(editText.getText().toString().isEmpty() || editText.getText().toString().equals("T")) {
+                    editText.setText("TB");
+                    editText.setSelection(editText.getText().length());
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
+
+    private void setOnClickListenerForEditText(final EditText editText) {
+        editText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(editText.getText().toString().isEmpty() || editText.getText().toString().equals("T")) {
+                    editText.setText("TB");
+                    editText.setSelection(editText.getText().length());
+                } else {
+                    editText.setSelection(editText.getText().length());
+                }
+            }
+
+        });
+    }
+
 }
 
 
