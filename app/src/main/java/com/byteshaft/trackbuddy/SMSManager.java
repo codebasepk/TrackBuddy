@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
+import android.location.LocationListener;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -25,19 +26,16 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
     SmsManager sms = SmsManager.getDefault();
     Context mContext = null;
     LocationService gps;
-    Location location;
     private String phoneNumber;
     private static MediaPlayer mp;
-    private float currentSpeed;
     private GoogleApiClient mGoogleApiClient;
-
 
     @Override
 
     public void onReceive(Context context, Intent intent) {
 
         mContext = context;
-        gps = new LocationService(context);
+
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         boolean trackerBool = preferences.getBoolean("trackerPreference", true);
         boolean sirenBool = preferences.getBoolean("sirenPreference", true);
@@ -51,11 +49,13 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
             phoneNumber = message.getOriginatingAddress();
 
             if (trackerBool) {
+                gps = new LocationService(context);
                 gps.isLocationServiceAvailable();
 
                 if (!gps.isNetworkEnabled && !gps.isGPSEnabled) {
                     sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nLocation Service of the target device is Disabled.", null, null);
                     System.out.println("GPS Disabled. Sending SMS...");
+                    gps.locationManager.removeUpdates(gps);
                 } else {
                     mGoogleApiClient = new GoogleApiClient.Builder(context)
                             .addConnectionCallbacks(this)
@@ -64,6 +64,7 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
                             .build();
                     mGoogleApiClient.connect();
                     acquireLocation();
+                    gps.locationManager.removeUpdates(gps);
                 }
 
             } else {
@@ -93,11 +94,8 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
             }
         } else if (message.getMessageBody().contentEquals("TBspeed")) {
             phoneNumber = message.getOriginatingAddress();
-
-            if (location.hasSpeed()) {
-                currentSpeed = location.getSpeed();
-                sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nThe current average speed of the target device is" + currentSpeed, null, null);
-            }
+            gps = new LocationService(context);
+            acquireSpeed();
         }
     }
 
@@ -131,6 +129,32 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
                         sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\n" + "Device cannot be located at the moment.\n\nMake sure the Location Service of the target device is on High-Accuracy mode.", null, null);
                         System.out.println("Device cannot be Located. Sending SMS...");
                     }
+            }
+        }).start();
+    }
+
+    public void acquireSpeed() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                double mSpeed;
+               int counter = 0;
+               do {
+                       try {
+                           Thread.sleep(2000);
+                       } catch (InterruptedException e) {
+                           e.printStackTrace();
+                       }
+                       mSpeed = gps.speed;
+                       counter++;
+                   System.out.println(counter);
+                   if (gps.speed == 0.0 && counter > 10) {
+                       break;
+                   }
+
+               }while (gps.speed == 0.0);
+                sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nCurrent speed of the target Device is: " + mSpeed*3600/1000 + "km/h" , null, null);
+                gps.locationManager.removeUpdates(gps);
             }
         }).start();
     }
