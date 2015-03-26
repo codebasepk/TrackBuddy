@@ -178,6 +178,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                         dialog.dismiss();
                     }
                 });
+                dialog.setTitle("Siren");
                 dialog.setContentView(sirenRelativeLayout);
                 break;
             case 2:

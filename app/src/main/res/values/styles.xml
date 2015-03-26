@@ -4,11 +4,24 @@
 
     <style name="PauseDialog" parent="@android:style/Theme.Dialog">
         <item name="android:windowAnimationStyle">@style/PauseDialogAnimation</item>
+        <item name="android:windowTitleStyle">@style/dialog_title_style</item>
     </style>
 
     <style name="PauseDialogAnimation">
         <item name="android:windowEnterAnimation">@anim/abc_slide_in_top</item>
         <item name="android:windowExitAnimation">@anim/abc_slide_out_top</item>
     </style>
+
+    <style name="dialog_title_style" parent="android:Widget.TextView">
+        <item name="android:background">@color/background_material_dark</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">@color/button_material_light</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+
 
 </resources>

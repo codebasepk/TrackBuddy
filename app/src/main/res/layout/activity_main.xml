@@ -6,32 +6,59 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="6dp"
+        android:text="All the SMS codes are Case and Character sensitive."
+        android:textColor="#B3FF0000"/>
+
+    <TextView
         android:id="@+id/trackerSMSCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
-        android:textSize="17dp"
+        android:layout_marginTop="20dp"
+        android:typeface="serif"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:shadowColor="#B3000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
         android:textColor="#669900"/>
 
     <TextView
         android:id="@+id/sirenSMSCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/trackerSMSCode"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="36dp"
-        android:textSize="17dp"
+        android:layout_marginTop="21dp"
+        android:typeface="serif"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:shadowColor="#B3000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
         android:textColor="#669900"/>
 
     <TextView
         android:id="@+id/speedSMSCode"
-        android:layout_alignBottom="@+id/sirenSMSCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/sirenSMSCode"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp"
-        android:textSize="15dp"
-        android:textColor="#CC0000"/>
+        android:layout_marginTop="21dp"
+        android:typeface="serif"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:shadowColor="#B3000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
+        android:textColor="#669900"/>
 
     <ImageView
         android:layout_width="wrap_content"
