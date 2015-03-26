@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.location.LocationManager;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
@@ -30,6 +32,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 
 public class MainActivity extends ActionBarActivity implements ListView.OnItemClickListener {
 
@@ -50,7 +54,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     TextView trackerSMSCode;
     TextView sirenSMSCode;
 
-    Context context;
+    int positionGlobal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +74,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         listView.setOnItemClickListener(this);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         listView.setOnItemClickListener(this);
-
         drawerListener = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.drawer_close) {
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -79,9 +82,8 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
 
             @Override
             public void onDrawerClosed(View drawerView) {
-
                 super.onDrawerClosed(drawerView);
-                System.out.println("oyoyo");
+                popDialog(positionGlobal);
             }
         };
         drawerLayout.setDrawerListener(drawerListener);
@@ -111,21 +113,19 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
         selectItem(position);
-        popDialog(position);
-    }
-
-    private void selectItem(int position) {
-
-        listView.setItemChecked(position, true);
-        setTitle(items[position]);
         drawerLayout.closeDrawer(listView);
     }
 
-    private void popDialog(int window) {
-        dialog = new Dialog(MainActivity.this, R.style.PauseDialog);
+    public void selectItem(int position) {
+        listView.setItemChecked(position, true);
+        setTitle(items[position]);
+        positionGlobal = position;
+    }
 
+    public void popDialog(int window) {
+        dialog = new Dialog(MainActivity.this, R.style.PauseDialog);
 
         switch (window) {
             case 0:
@@ -280,8 +280,10 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
             }
 
         });
-    }
 
+    }
 }
+
+
 
 

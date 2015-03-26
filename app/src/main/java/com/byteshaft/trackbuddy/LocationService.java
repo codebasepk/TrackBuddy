@@ -19,6 +19,8 @@ public class LocationService extends ContextWrapper implements LocationListener 
 
     public LocationService(Context context) {
         super(context);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
     }
 
     public void isLocationServiceAvailable() {
@@ -34,6 +36,7 @@ public class LocationService extends ContextWrapper implements LocationListener 
 
     @Override
     public void onLocationChanged(Location location) {
+       location.getLatitude();
        speed = location.getSpeed();
     }
     @Override
