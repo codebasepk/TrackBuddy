@@ -6,10 +6,11 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/info1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="7dp"
         android:text="All the SMS codes are Case and Character sensitive."
         android:textColor="#B3FF0000"/>
 
@@ -18,7 +19,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
+        android:layout_alignTop="@+id/info1"
+        android:layout_marginTop="22dp"
         android:typeface="serif"
         android:textSize="20dp"
         android:textStyle="bold"
@@ -34,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/trackerSMSCode"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="21dp"
+        android:layout_marginTop="22dp"
         android:typeface="serif"
         android:textSize="20dp"
         android:textStyle="bold"
@@ -50,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/sirenSMSCode"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="21dp"
+        android:layout_marginTop="22dp"
         android:typeface="serif"
         android:textSize="20dp"
         android:textStyle="bold"
@@ -65,7 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="120dp"
+        android:layout_marginBottom="110dp"
         android:background="@drawable/logo_main"/>
 
     <ImageView
@@ -81,7 +83,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="8dp"
         android:textColor="#FF0000"
         android:text="Warning: Standard SMS charges may apply."/>
 
