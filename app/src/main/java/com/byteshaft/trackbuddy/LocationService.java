@@ -18,7 +18,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
     static double speed;
     private GoogleApiClient mGoogleApiClient;
 
-    public static LocationManager locationManager;
+    static LocationManager locationManager;
     private Helper mHelpers = null;
 
     public LocationService(Context context) {

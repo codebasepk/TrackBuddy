@@ -4,19 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Location;
-import android.location.LocationListener;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationServices;
 
 
 public class SMSManager extends BroadcastReceiver implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -48,10 +41,11 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
 
                 if (!helper.isLocationServiceAvailable()) {
                     helper.sendSms(phoneNumber, "TrackBuddy:\n\nLocation Service of the target device is Disabled.");
-                    gps.locationManager.removeUpdates(gps);
+
+                    LocationService.locationManager.removeUpdates(gps);
                 } else {
                     gps.acquireLocation();
-                    gps.locationManager.removeUpdates(gps);
+                    LocationService.locationManager.removeUpdates(gps);
                 }
 
             } else {

@@ -1,10 +1,8 @@
 package com.byteshaft.trackbuddy;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -14,13 +12,10 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
@@ -104,10 +99,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (drawerListener.onOptionsItemSelected(item)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return drawerListener.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
     @Override
