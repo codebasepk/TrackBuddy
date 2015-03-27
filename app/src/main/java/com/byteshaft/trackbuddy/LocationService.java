@@ -67,6 +67,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
             @Override
             public void run() {
                 double mSpeed;
+
                 int counter = 0;
                 do {
                     try {
@@ -75,6 +76,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
                         e.printStackTrace();
                     }
                     mSpeed = speed;
+
                     counter++;
                     System.out.println(counter);
                     if (speed == 0.0 && counter > 10) {
@@ -82,8 +84,11 @@ public class LocationService extends ContextWrapper implements LocationListener,
                     }
 
                 } while (speed == 0.0);
-                mHelpers.sendSms(SMSManager.phoneNumber, "TrackBuddy:\n\nCurrent speed of the target Device is: " + mSpeed*3600/1000 + "km/h");
+                int roundedValueSpeed = (int)mSpeed;
+                mHelpers.sendSms(SMSManager.phoneNumber, "TrackBuddy:\n\nCurrent speed of the target Device is: " + roundedValueSpeed*3600/1000 + " km/h");
                 locationManager.removeUpdates(LocationService.this);
+                speed = 0.0;
+
             }
         }).start();
     }

@@ -64,9 +64,15 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
                 helper.sendSms(phoneNumber, "TrackBuddy:\n\nSiren Service of the target device is switched off by the user.");
             }
         } else if (message.getMessageBody().contentEquals("TBspeed")) {
+
             phoneNumber = message.getOriginatingAddress();
-            gps = new LocationService(context);
-            gps.acquireSpeed();
+            if(!helper.isSpeedAcquirable()) {
+                helper.sendSms(phoneNumber, "TrackBuddy:\n\nGPS Service of the target device is switched off by the user.");
+            } else {
+                gps = new LocationService(context);
+                gps.acquireSpeed();
+
+            }
         }
     }
 

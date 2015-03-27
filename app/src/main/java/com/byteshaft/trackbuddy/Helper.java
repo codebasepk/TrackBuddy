@@ -20,11 +20,16 @@ public class Helper extends ContextWrapper {
         return isGpsEnabled(locationManager) && isNetworkBasedGpsEnabled(locationManager);
     }
 
+    boolean isSpeedAcquirable() {
+        LocationManager locationManager = getLocationManager();
+        return isGpsEnabled(locationManager);
+    }
+
     private LocationManager getLocationManager() {
         return (LocationManager) getSystemService(Context.LOCATION_SERVICE);
     }
 
-    private boolean isGpsEnabled(LocationManager locationManager) {
+    boolean isGpsEnabled(LocationManager locationManager) {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
