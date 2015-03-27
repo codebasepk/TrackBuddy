@@ -38,6 +38,7 @@
         android:id="@+id/applyButtonSiren"
         android:layout_below="@+id/editTextSiren"
         android:layout_alignRight="@+id/editTextSiren"
-        android:layout_alignEnd="@+id/editTextSiren" />
+        android:layout_alignEnd="@+id/editTextSiren"
+        android:enabled="false"/>
 
 </RelativeLayout>

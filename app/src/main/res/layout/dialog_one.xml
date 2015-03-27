@@ -37,6 +37,7 @@
         android:id="@+id/applyButtonTracker"
         android:layout_below="@+id/editTextTracker"
         android:layout_alignRight="@+id/editTextTracker"
-        android:layout_alignEnd="@+id/editTextTracker"/>
+        android:layout_alignEnd="@+id/editTextTracker"
+        android:enabled="false"/>
 
 </RelativeLayout>

@@ -1,10 +1,8 @@
 package com.byteshaft.trackbuddy;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -14,25 +12,21 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-
-public class MainActivity extends ActionBarActivity implements ListView.OnItemClickListener {
+public class MainActivity extends ActionBarActivity implements ListView.OnItemClickListener,
+        Switch.OnCheckedChangeListener, Button.OnClickListener {
 
     private DrawerLayout drawerLayout;
     private ListView listView;
     private ActionBarDrawerToggle drawerListener;
-    private MyAdapter myAdapter;
 
     Button trackerApplyButton;
     Button sirenApplyButton;
@@ -51,20 +45,20 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     String trackerVariable;
     String sirenVariable;
     String speedVariable;
-    String[] items;
 
     Dialog dialog;
 
-    int positionGlobal;
+    int positionGlobal = -1;
+    final int dummyPosition = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
         getSupportActionBar().setTitle("Home");
+        Helper helper = new Helper(this);
 
-        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences = helper.getPreferenceManager();
 
         trackerVariable = preferences.getString("trackerVariablePrefs", "TBgps");
         trackerSMSCode = (TextView) findViewById(R.id.trackerSMSCode);
@@ -78,7 +72,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         speedSMSCode = (TextView) findViewById(R.id.speedSMSCode);
         speedSMSCode.setText("Speed Code: " + speedVariable);
 
-        myAdapter = new MyAdapter(this);
+        DrawerAdapter myAdapter = new DrawerAdapter(this);
 
         listView = (ListView) findViewById(R.id.drawer_list);
         listView.setAdapter(myAdapter);
@@ -101,15 +95,11 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         drawerLayout.setDrawerListener(drawerListener);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (drawerListener.onOptionsItemSelected(item)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return drawerListener.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -132,158 +122,67 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
 
     public void selectItem(int position) {
         listView.setItemChecked(position, true);
-        setTitle(items[position]);
+        setTitle(DrawerAdapter.items[position]);
         positionGlobal = position;
     }
 
     public void popDialog(int window) {
         dialog = new Dialog(MainActivity.this, R.style.PauseDialog);
+        LayoutInflater layoutInflater = getLayoutInflater();
 
         switch (window) {
             case 0:
-                LayoutInflater trackerInflater = getLayoutInflater();
-                RelativeLayout trackerRelativeLayout = (RelativeLayout) trackerInflater.inflate(R.layout.dialog_one, null);
+                RelativeLayout trackerRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_one, null);
                 final Switch trackerSwitch = (Switch) trackerRelativeLayout.findViewById(R.id.switchTracker);
                 boolean trackerPref = preferences.getBoolean("trackerPreference", true);
                 trackerSwitch.setChecked(trackerPref);
-                trackerSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                        preferences.edit().putBoolean("trackerPreference", isChecked).apply();
-                        }
-                });
+                trackerSwitch.setOnCheckedChangeListener(this);
 
                 trackerApplyButton = (Button) trackerRelativeLayout.findViewById(R.id.applyButtonTracker);
                 trackerEditText = (EditText) trackerRelativeLayout.findViewById(R.id.editTextTracker);
-                setOnTextChangeListenerForInputField(trackerEditText);
+                setOnTextChangeListenerForInputField(trackerEditText, trackerApplyButton);
                 setOnClickListenerForEditText(trackerEditText);
-                trackerApplyButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        trackerVariable = trackerEditText.getText().toString();
-                        trackerEditText.getText().clear();
-                        preferences.edit().putString("trackerVariablePrefs", trackerVariable).commit();
-                        trackerSMSCode.setText("Tracker Code: " + trackerVariable);
-                        dialog.dismiss();
-                    }
-                });
-                dialog.setTitle("Tracker");
-                dialog.setContentView(trackerRelativeLayout);
+                trackerApplyButton.setOnClickListener(this);
+                initiateDialog("Tracker", trackerRelativeLayout);
                 break;
             case 1:
-                LayoutInflater sirenInflater = getLayoutInflater();
-                RelativeLayout sirenRelativeLayout = (RelativeLayout) sirenInflater.inflate(R.layout.dialog_two, null);
+                RelativeLayout sirenRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_two, null);
                 final Switch sirenSwitch = (Switch) sirenRelativeLayout.findViewById(R.id.switchSiren);
                 boolean sirenPref = preferences.getBoolean("sirenPreference", true);
                 sirenSwitch.setChecked(sirenPref);
-                sirenSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                        preferences.edit().putBoolean("sirenPreference", isChecked).apply();
-                    }
-                });
+                sirenSwitch.setOnCheckedChangeListener(this);
 
                 sirenApplyButton = (Button) sirenRelativeLayout.findViewById(R.id.applyButtonSiren);
                 sirenEditText = (EditText) sirenRelativeLayout.findViewById(R.id.editTextSiren);
-                setOnTextChangeListenerForInputField(sirenEditText);
+                setOnTextChangeListenerForInputField(sirenEditText, sirenApplyButton);
                 setOnClickListenerForEditText(sirenEditText);
-                sirenApplyButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        sirenVariable = sirenEditText.getText().toString();
-                        sirenEditText.getText().clear();
-                        preferences.edit().putString("sirenVariablePrefs", sirenVariable).commit();
-                        sirenSMSCode.setText("Siren Code: " + sirenVariable);
-                        dialog.dismiss();
-                    }
-                });
-                dialog.setTitle("Siren");
-                dialog.setContentView(sirenRelativeLayout);
+                sirenApplyButton.setOnClickListener(this);
+                initiateDialog("Siren", sirenRelativeLayout);
                 break;
             case 2:
-                LayoutInflater speedInflater = getLayoutInflater();
-                RelativeLayout speedRelativeLayout = (RelativeLayout) speedInflater.inflate(R.layout.dialog_three, null);
+                RelativeLayout speedRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_three, null);
                 final Switch speedSwitch = (Switch) speedRelativeLayout.findViewById(R.id.switchSpeed);
                 boolean speedPref = preferences.getBoolean("speedPreference", true);
                 speedSwitch.setChecked(speedPref);
-                speedSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                        preferences.edit().putBoolean("speedPreference", isChecked).apply();
-                    }
-                });
+                speedSwitch.setOnCheckedChangeListener(this);
 
                 speedApplyButton = (Button) speedRelativeLayout.findViewById(R.id.applyButtonSpeed);
                 speedEditText = (EditText) speedRelativeLayout.findViewById(R.id.editTextSpeed);
-                setOnTextChangeListenerForInputField(speedEditText);
+                setOnTextChangeListenerForInputField(speedEditText, speedApplyButton);
                 setOnClickListenerForEditText(speedEditText);
-                speedApplyButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        speedVariable = speedEditText.getText().toString();
-                        speedEditText.getText().clear();
-                        preferences.edit().putString("speedVariablePrefs", speedVariable).commit();
-                        speedSMSCode.setText("Speed Code: " + speedVariable);
-                        dialog.dismiss();
-                    }
-                });
-                dialog.setTitle("Speed");
-                dialog.setContentView(speedRelativeLayout);
+                speedApplyButton.setOnClickListener(this);
+                initiateDialog("Speed", speedRelativeLayout);
                 break;
             case 3:
-                dialog.setTitle("Blacklist/Whitelist");
-                dialog.setContentView(R.layout.dialog_four);
+                RelativeLayout blacklistWhitelistRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_four, null);
+                initiateDialog("Blacklist/Whitelist", blacklistWhitelistRelativeLayout);
                 break;
         }
+        positionGlobal = dummyPosition;
 
-        dialog.show();
     }
 
-
-    class MyAdapter extends BaseAdapter {
-
-        private Context context;
-        int[] images = {R.drawable.ic_tracker, R.drawable.ic_siren, R.drawable.ic_speed, R.drawable.ic_list};
-
-        public MyAdapter(Context context) {
-            this.context = context;
-            items = context.getResources().getStringArray(R.array.items);
-        }
-
-        @Override
-        public int getCount() {
-            return items.length;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return items[position];
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View row;
-            if (convertView == null) {
-                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                row = inflater.inflate(R.layout.drawer_layout, parent, false);
-            } else {
-                row = convertView;
-            }
-            ImageView iconImageView = (ImageView) row.findViewById(R.id.trackerIcon);
-            iconImageView.setImageResource(images[position]);
-            return row;
-        }
-    }
-
-    private void setOnTextChangeListenerForInputField(final EditText editText) {
+    private void setOnTextChangeListenerForInputField(final EditText editText, final Button button) {
         editText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -292,10 +191,15 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (editText.getText().toString().isEmpty()) {
+                    button.setEnabled(false);
+                } else {
+                    button.setEnabled(true);
+                }
                 if (editText.getText().toString().equals("TB")) {
                     return;
                 }
-                if(editText.getText().toString().isEmpty() || editText.getText().toString().equals("T")) {
+                if (editText.getText().toString().isEmpty() || editText.getText().toString().equals("T")) {
                     editText.setText("TB");
                     editText.setSelection(editText.getText().length());
                 }
@@ -303,7 +207,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
     }
@@ -312,7 +215,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         editText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(editText.getText().toString().isEmpty() || editText.getText().toString().equals("T")) {
+                if (editText.getText().toString().isEmpty() || editText.getText().toString().equals("T")) {
                     editText.setText("TB");
                     editText.setSelection(editText.getText().length());
                 } else {
@@ -322,6 +225,54 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
 
         });
 
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        switch (buttonView.getId()) {
+            case R.id.switchTracker:
+                preferences.edit().putBoolean("trackerPreference", isChecked).apply();
+                break;
+            case R.id.switchSiren:
+                preferences.edit().putBoolean("sirenPreference", isChecked).apply();
+                break;
+            case R.id.switchSpeed:
+                preferences.edit().putBoolean("speedPreference", isChecked).apply();
+                break;
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.applyButtonTracker:
+                trackerVariable = trackerEditText.getText().toString();
+                trackerEditText.getText().clear();
+                preferences.edit().putString("trackerVariablePrefs", trackerVariable).apply();
+                trackerSMSCode.setText("Tracker Code: " + trackerVariable);
+                dialog.dismiss();
+                break;
+            case R.id.applyButtonSiren:
+                sirenVariable = sirenEditText.getText().toString();
+                sirenEditText.getText().clear();
+                preferences.edit().putString("sirenVariablePrefs", sirenVariable).apply();
+                sirenSMSCode.setText("Siren Code: " + sirenVariable);
+                dialog.dismiss();
+                break;
+            case R.id.applyButtonSpeed:
+                speedVariable = speedEditText.getText().toString();
+                speedEditText.getText().clear();
+                preferences.edit().putString("speedVariablePrefs", speedVariable).apply();
+                speedSMSCode.setText("Speed Code: " + speedVariable);
+                dialog.dismiss();
+                break;
+        }
+    }
+
+    private void initiateDialog(String title, RelativeLayout layout) {
+        dialog.setTitle(title);
+        dialog.setContentView(layout);
+        dialog.show();
     }
 }
 
