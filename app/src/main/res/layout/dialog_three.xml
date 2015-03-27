@@ -38,6 +38,7 @@
         android:id="@+id/applyButtonSpeed"
         android:layout_below="@+id/editTextSpeed"
         android:layout_alignRight="@+id/editTextSpeed"
-        android:layout_alignEnd="@+id/editTextSpeed" />
+        android:layout_alignEnd="@+id/editTextSpeed"
+        android:enabled="false"/>
 
 </RelativeLayout>

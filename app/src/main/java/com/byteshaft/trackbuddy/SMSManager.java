@@ -23,20 +23,15 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
 
     private static final String clipBoard = "Message Received: ";
     SmsMessage message = null;
-    SmsManager sms = SmsManager.getDefault();
     Context mContext = null;
     LocationService gps;
-    private String phoneNumber;
-    private static MediaPlayer mp;
-    private GoogleApiClient mGoogleApiClient;
+    static String phoneNumber;
 
     @Override
-
     public void onReceive(Context context, Intent intent) {
-
         mContext = context;
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        Helper helper = new Helper(context);
+        SharedPreferences preferences = helper.getPreferenceManager();
         boolean trackerBool = preferences.getBoolean("trackerPreference", true);
         boolean sirenBool = preferences.getBoolean("sirenPreference", true);
 
@@ -50,113 +45,35 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
 
             if (trackerBool) {
                 gps = new LocationService(context);
-                gps.isLocationServiceAvailable();
 
-                if (!gps.isNetworkEnabled && !gps.isGPSEnabled) {
-                    sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nLocation Service of the target device is Disabled.", null, null);
-                    System.out.println("GPS Disabled. Sending SMS...");
+                if (!helper.isLocationServiceAvailable()) {
+                    helper.sendSms(phoneNumber, "TrackBuddy:\n\nLocation Service of the target device is Disabled.");
                     gps.locationManager.removeUpdates(gps);
                 } else {
-                    mGoogleApiClient = new GoogleApiClient.Builder(context)
-                            .addConnectionCallbacks(this)
-                            .addOnConnectionFailedListener(this)
-                            .addApi(LocationServices.API)
-                            .build();
-                    mGoogleApiClient.connect();
-                    acquireLocation();
+                    gps.acquireLocation();
                     gps.locationManager.removeUpdates(gps);
                 }
 
             } else {
-                sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nTracking Service of the target device is switched off by the user.", null, null);
-        System.out.println("TrackerSwitched OFF");
-                    }
-
+                helper.sendSms(phoneNumber, "TrackBuddy:\n\nTracking Service of the target device is switched off by the user.");
+                System.out.println("TrackerSwitched OFF");
+            }
         } else if (message.getMessageBody().contentEquals(preferences.getString("sirenVariablePrefs", "TBsiren"))) {
                 phoneNumber = message.getOriginatingAddress();
 
             if (sirenBool) {
-                mp = MediaPlayer.create(context, R.raw.alarm);
-                mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                AudioManager am =
-                        (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-                am.setStreamVolume(
-                        AudioManager.STREAM_MUSIC,
-                        am.getStreamMaxVolume(AudioManager.STREAM_MUSIC),
-                        0);
-                mp.start();
-                sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nSiren Message successfully received.", null, null);
+                helper.playSiren();
+                helper.sendSms(phoneNumber, "TrackBuddy:\n\nSiren Message successfully received.");
                 System.out.println("Beep Message Sending...");
             } else {
                 System.out.println("Siren Switched OFF");
-                sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nSiren Service of the target device is switched off by the user.", null, null);
-
+                helper.sendSms(phoneNumber, "TrackBuddy:\n\nSiren Service of the target device is switched off by the user.");
             }
         } else if (message.getMessageBody().contentEquals("TBspeed")) {
             phoneNumber = message.getOriginatingAddress();
             gps = new LocationService(context);
-            acquireSpeed();
+            gps.acquireSpeed();
         }
-    }
-
-    public void acquireLocation() {
-        System.out.println("Thread running...");
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Location mLocation;
-                int counter = 0;
-                do {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                    counter++;
-                    System.out.println(counter);
-                    if (counter > 120 && mLocation == null) {
-                        break;
-                    }
-                } while (mLocation == null);
-                    if (mLocation != null) {
-                        String lat = String.valueOf(mLocation.getLatitude());
-                        String lon = String.valueOf(mLocation.getLongitude());
-                        sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\n" + "https://maps.google.com/maps?q=" + lat + "," + lon, null, null);
-                        System.out.println("Location acquired. Sending SMS...");
-                    } else {
-                        sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\n" + "Device cannot be located at the moment.\n\nMake sure the Location Service of the target device is on High-Accuracy mode.", null, null);
-                        System.out.println("Device cannot be Located. Sending SMS...");
-                    }
-            }
-        }).start();
-    }
-
-    public void acquireSpeed() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                double mSpeed;
-               int counter = 0;
-               do {
-                       try {
-                           Thread.sleep(2000);
-                       } catch (InterruptedException e) {
-                           e.printStackTrace();
-                       }
-                       mSpeed = gps.speed;
-                       counter++;
-                   System.out.println(counter);
-                   if (gps.speed == 0.0 && counter > 10) {
-                       break;
-                   }
-
-               }while (gps.speed == 0.0);
-                sms.sendTextMessage(phoneNumber, null, "TrackBuddy:\n\nCurrent speed of the target Device is: " + mSpeed*3600/1000 + "km/h" , null, null);
-                gps.locationManager.removeUpdates(gps);
-            }
-        }).start();
     }
 
     @Override
