@@ -7,6 +7,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -44,7 +45,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
 
                     mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                     counter++;
-                    System.out.println(counter);
+                    System.out.println("Tracker Thread Runnning... " + counter);
                     if (counter > 120 && mLocation == null) {
                         break;
                     }
@@ -53,10 +54,10 @@ public class LocationService extends ContextWrapper implements LocationListener,
                     String lat = String.valueOf(mLocation.getLatitude());
                     String lon = String.valueOf(mLocation.getLongitude());
                     mHelpers.sendSms(SMSManager.phoneNumber, "TrackBuddy:\n\nhttps://maps.google.com/maps?q=" + lat + "," + lon);
-                    System.out.println("Location acquired. Sending SMS...");
+                    Log.i("Location", "Location acquired. Sending SMS...");
                 } else {
-                    mHelpers.sendSms(SMSManager.phoneNumber, "TrackBuddy:\n\nDevice cannot be located at the moment.\n\nMake sure the Location Service of the target device is on High-Accuracy mode.");
-                    System.out.println("Device cannot be Located. Sending SMS...");
+                    mHelpers.sendSms(SMSManager.phoneNumber, "TrackBuddy:\n\nTarget device cannot be located at the moment.\n\nMake sure the Location Service of the target device is on High-Accuracy Mode.");
+                    Log.i("Location", "Device cannot be Located. Sending SMS...");
                 }
             }
         }).start();
@@ -78,14 +79,15 @@ public class LocationService extends ContextWrapper implements LocationListener,
                     mSpeed = speed;
 
                     counter++;
-                    System.out.println(counter);
-                    if (speed == 0.0 && counter > 10) {
+                    System.out.println("Speed Thread Running... " + counter);
+                    if (speed == 0.0 && counter > 9) {
                         break;
                     }
 
                 } while (speed == 0.0);
                 int roundedValueSpeed = (int)mSpeed;
-                mHelpers.sendSms(SMSManager.phoneNumber, "TrackBuddy:\n\nCurrent speed of the target Device is: " + roundedValueSpeed*3600/1000 + " km/h");
+                mHelpers.sendSms(SMSManager.phoneNumber, "TrackBuddy:\n\nCurrent speed of the target device is: " + roundedValueSpeed*3600/1000 + " Km/h\n\n(Accuracy +/- 5 Km/h)");
+                Log.i("Speed", "Current Speed acquired. Sending SMS...");
                 locationManager.removeUpdates(LocationService.this);
                 speed = 0.0;
 
