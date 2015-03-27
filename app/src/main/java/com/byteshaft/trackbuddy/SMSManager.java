@@ -26,7 +26,8 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
         Helper helper = new Helper(context);
         SharedPreferences preferences = helper.getPreferenceManager();
         boolean trackerBool = preferences.getBoolean("trackerPreference", true);
-        boolean sirenBool = preferences.getBoolean("sirenPreference", true);
+        boolean sirenBool = preferences.getBoolean("sirenPreference", false);
+        boolean speedBool = preferences.getBoolean("speedPreference", true);
 
         Bundle bundle = intent.getExtras();
         Object[] pdus = (Object[]) bundle.get("pdus");
@@ -40,38 +41,49 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
                 gps = new LocationService(context);
 
                 if (!helper.isLocationServiceAvailable()) {
-                    helper.sendSms(phoneNumber, "TrackBuddy:\n\nLocation Service of the target device is Disabled.");
-
+                    Log.i("Tracker", "Location Service diabled. Sending SMS...");
+                    helper.sendSms(phoneNumber, "TrackBuddy:\n\nLocation Service of the target device is disabled from the Android System Settings.");
                     LocationService.locationManager.removeUpdates(gps);
+
                 } else {
+
                     gps.acquireLocation();
                     LocationService.locationManager.removeUpdates(gps);
                 }
 
             } else {
-                helper.sendSms(phoneNumber, "TrackBuddy:\n\nTracking Service of the target device is switched off by the user.");
-                System.out.println("TrackerSwitched OFF");
+
+                Log.i("TrackBuddy_Tracker", "TrackerSwitched OFF. Sending SMS...");
+                helper.sendSms(phoneNumber, "TrackBuddy:\n\nTracking Service of the target device is switched off from the TrackBuddy application.");
             }
         } else if (message.getMessageBody().contentEquals(preferences.getString("sirenVariablePrefs", "TBsiren"))) {
                 phoneNumber = message.getOriginatingAddress();
 
             if (sirenBool) {
-                helper.playSiren();
-                helper.sendSms(phoneNumber, "TrackBuddy:\n\nSiren Message successfully received.");
-                System.out.println("Beep Message Sending...");
-            } else {
-                System.out.println("Siren Switched OFF");
-                helper.sendSms(phoneNumber, "TrackBuddy:\n\nSiren Service of the target device is switched off by the user.");
-            }
-        } else if (message.getMessageBody().contentEquals("TBspeed")) {
 
+                helper.playSiren();
+                Log.i("Siren", "Siren produced. Sending SMS...");
+                helper.sendSms(phoneNumber, "TrackBuddy:\n\nSiren Message successfully received.");
+
+                } else {
+
+                Log.i("TrackBuddy_Siren", "Siren Switched OFF. Sending SMS...");
+                helper.sendSms(phoneNumber, "TrackBuddy:\n\nSiren Service of the target device is switched off from the TrackBuddy application.");
+            }
+        } else if (message.getMessageBody().contentEquals(preferences.getString("speedVariablePrefs", "TBspeed"))) {
             phoneNumber = message.getOriginatingAddress();
-            if(!helper.isSpeedAcquirable()) {
-                helper.sendSms(phoneNumber, "TrackBuddy:\n\nGPS Service of the target device is switched off by the user.");
-            } else {
+            if (speedBool) {
+
+                if(!helper.isSpeedAcquirable()) {
+                Log.i("Speed", "GPS Service disabled. Sending SMS...");
+                helper.sendSms(phoneNumber, "TrackBuddy:\n\nGPS Service of the target device is disabled from the Android System Settings.");
+                 } else {
                 gps = new LocationService(context);
                 gps.acquireSpeed();
-
+                }
+            } else {
+                Log.i("Speed", "Speed Switched OFF. Sending SMS...");
+                helper.sendSms(phoneNumber, "TrackBuddy:\n\nSpeed Service of the target device is switched off from the TrackBuddy application.");
             }
         }
     }

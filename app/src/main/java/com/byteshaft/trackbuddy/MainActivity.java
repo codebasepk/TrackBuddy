@@ -148,7 +148,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
             case 1:
                 RelativeLayout sirenRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_two, null);
                 final Switch sirenSwitch = (Switch) sirenRelativeLayout.findViewById(R.id.switchSiren);
-                boolean sirenPref = preferences.getBoolean("sirenPreference", true);
+                boolean sirenPref = preferences.getBoolean("sirenPreference", false);
                 sirenSwitch.setChecked(sirenPref);
                 sirenSwitch.setOnCheckedChangeListener(this);
 
