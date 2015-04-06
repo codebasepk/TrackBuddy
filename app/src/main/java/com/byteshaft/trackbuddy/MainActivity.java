@@ -11,6 +11,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -20,6 +21,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements ListView.OnItemClickListener,
         Switch.OnCheckedChangeListener, Button.OnClickListener {
@@ -51,6 +53,8 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     int positionGlobal = -1;
     final int dummyPosition = -1;
 
+    View topLevelLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +63,14 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         Helper helper = new Helper(this);
 
         preferences = helper.getPreferenceManager();
+
+        topLevelLayout = findViewById(R.id.top_layout);
+
+
+
+        if (isFirstTime()) {
+            topLevelLayout.setVisibility(View.INVISIBLE);
+        }
 
         trackerVariable = preferences.getString("trackerVariablePrefs", "TBgps");
         trackerSMSCode = (TextView) findViewById(R.id.trackerSMSCode);
@@ -93,6 +105,8 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
             }
         };
         drawerLayout.setDrawerListener(drawerListener);
+
+
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -100,7 +114,11 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return drawerListener.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
+
     }
+
+
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -244,6 +262,8 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
 
     @Override
     public void onClick(View v) {
+        Toast.makeText(getApplicationContext(), "Setting Applied",
+                Toast.LENGTH_SHORT).show();
         switch (v.getId()) {
             case R.id.applyButtonTracker:
                 trackerVariable = trackerEditText.getText().toString();
@@ -273,6 +293,33 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         dialog.setTitle(title);
         dialog.setContentView(layout);
         dialog.show();
+    }
+
+    private boolean isFirstTime()
+    {
+        SharedPreferences preferences = getPreferences(MODE_PRIVATE);
+        boolean ranBefore = preferences.getBoolean("RanBefore", false);
+        if (!ranBefore) {
+
+            topLevelLayout.setVisibility(View.VISIBLE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("RanBefore", true);
+            editor.commit();
+
+            topLevelLayout.setVisibility(View.VISIBLE);
+            topLevelLayout.setOnTouchListener(new View.OnTouchListener(){
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    topLevelLayout.setVisibility(View.INVISIBLE);
+                    return false;
+                }
+
+            });
+
+        }
+        return ranBefore;
+
     }
 }
 

@@ -68,4 +68,7 @@ public class Helper extends ContextWrapper {
     SharedPreferences getPreferenceManager() {
         return PreferenceManager.getDefaultSharedPreferences(this);
     }
+
+
+
 }
