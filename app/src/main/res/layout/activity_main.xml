@@ -1,3 +1,8 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/main_layout" >
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,8 +17,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="7dp"
         android:textSize="12dp"
-        android:text="All the SMS codes are Case and Character sensitive."
-        android:textColor="#B3FF0000"/>
+        android:text="All the SMS codes are case and character sensitive."
+        android:textColor="#9C27B0"/>
 
     <TextView
         android:id="@+id/trackerSMSCode"
@@ -110,3 +115,43 @@
     </android.support.v4.widget.DrawerLayout>
 
 </RelativeLayout>
+
+
+<RelativeLayout
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="#E6212121"
+android:id="@+id/top_layout">
+
+
+<ImageView
+    android:id="@+id/arrowImage"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_alignParentLeft="true"
+    android:paddingLeft="5dp"
+    android:paddingTop="15dp"
+    android:src="@drawable/ic_arrow"/>
+
+
+<TextView
+    android:layout_below="@+id/arrowImage"
+    android:id="@+id/textViewOne"
+    android:layout_margin="30dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:text="Click this button or swipe from the left edge to open Settings Drawer"
+    android:typeface="serif"
+    android:textSize="18dp"
+    android:textColor="@color/button_material_light"
+    android:shadowColor="#000000"
+    android:shadowDx="2"
+    android:shadowDy="2"
+    android:shadowRadius="4"
+    />
+
+</RelativeLayout>
+
+</FrameLayout>
