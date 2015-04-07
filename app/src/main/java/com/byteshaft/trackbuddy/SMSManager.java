@@ -40,15 +40,15 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
             if (trackerBool) {
                 gps = new LocationService(context);
 
-                if (!helper.isLocationServiceAvailable()) {
+                if (!helper.isAnyLocationServiceAvailable()) {
                     Log.i("Tracker", "Location Service diabled. Sending SMS...");
                     helper.sendSms(phoneNumber, "TrackBuddy:\n\nLocation Service of the target device is disabled from the Android System Settings.");
-                    LocationService.locationManager.removeUpdates(gps);
+
 
                 } else {
 
                     gps.acquireLocation();
-                    LocationService.locationManager.removeUpdates(gps);
+
                 }
 
             } else {
