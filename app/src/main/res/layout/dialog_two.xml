@@ -13,7 +13,7 @@
         android:layout_margin="10dp"
         android:layout_centerHorizontal="true"
         android:textStyle="bold"
-        android:text="This feature allows your device to produce siren sound."
+        android:text="This feature allows your device to emit siren sound."
         android:textSize="12dp"/>
 
 
@@ -30,7 +30,6 @@
         android:layout_width="230dp"
         android:layout_height="40dp"
         android:longClickable="false"
-        android:cursorVisible="false"
         android:inputType="textNoSuggestions"
         android:maxLength="10"
         android:layout_below="@+id/switchSiren"
@@ -58,6 +57,6 @@
         android:layout_margin="5dp"
         android:textColor="#FF0000"
         android:textSize="10dp"
-        android:text="Caution: Siren sound will be produced at full volume. Even if the device is in Silent Mode."/>
+        android:text="Caution: Siren sound will be emitted at full volume. Even if the device is in Silent Mode."/>
 
 </RelativeLayout>

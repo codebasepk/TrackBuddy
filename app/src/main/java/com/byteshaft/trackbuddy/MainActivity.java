@@ -55,6 +55,8 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     View topLevelLayout;
     View gpsSettingsLayout;
 
+
+
     int positionGlobal = -1;
     final int dummyPosition = -1;
 
@@ -187,8 +189,8 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 initiateDialog("Speed", speedRelativeLayout);
                 break;
             case 3:
-                RelativeLayout blacklistWhitelistRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_four, null);
-                initiateDialog("Blacklist/Whitelist", blacklistWhitelistRelativeLayout);
+                RelativeLayout blacklistRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_four, null);
+                initiateDialog("Blacklist", blacklistRelativeLayout);
                 break;
         }
         positionGlobal = dummyPosition;
