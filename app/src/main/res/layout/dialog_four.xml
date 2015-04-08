@@ -1,46 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@color/background_material_light">
+    <TextView
+        android:id="@+id/blacklistInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:text="This feature allows you to block specific buddies from accessing TrackBuddy application."
+        android:textSize="12dp"/>
 
     <Switch
-        android:layout_marginTop="20dp"
+        android:layout_below="@+id/blacklistInfo"
+        android:layout_marginTop="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:id="@+id/switchBlacklist" />
 
     <EditText
-        android:layout_marginTop="10dp"
-        android:layout_width="260dp"
+        android:layout_marginTop="15dp"
+        android:layout_width="230dp"
         android:layout_height="40dp"
+        android:inputType="textNoSuggestions"
         android:layout_below="@+id/switchBlacklist"
         android:layout_centerHorizontal="true"
-        android:hint="Place Contacts to be Blacklisted."
+        android:hint="Tap to add numbers."
+        android:textSize="14dp"
         android:id="@+id/editTextBlacklist"/>
 
-    <Switch
-        android:layout_marginTop="20dp"
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Apply"
+        android:id="@+id/applyButtonBlacklist"
+        android:layout_below="@+id/editTextBlacklist"
+        android:layout_alignRight="@+id/editTextBlacklist"
+        android:layout_alignEnd="@+id/editTextBlacklist"/>
+
+    <TextView
+        android:layout_below="@+id/applyButtonBlacklist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:id="@+id/switchWhitelist"
-        android:layout_below="@+id/editTextBlacklist"/>
-
-
-    <EditText
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_width="260dp"
-        android:layout_height="40dp"
-        android:layout_below="@+id/switchWhitelist"
-        android:layout_centerHorizontal="true"
-        android:hint="Place Contacts to be Whitelisted."
-        android:id="@+id/editTextWhitelist"
-        android:layout_marginBottom="5dp"/>
+        android:layout_margin="5dp"
+        android:textColor="#669900"
+        android:textSize="10dp"
+        android:text="Info: Speed accuracy varies with devices. Under normal conditions, accuracy range is ±5 Km/h."/>
 
 </RelativeLayout>

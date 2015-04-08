@@ -21,15 +21,9 @@ import android.widget.ImageView;
 
 
 public class Helper extends ContextWrapper {
-
     public Helper(Context base) {
         super(base);
     }
-
-//    boolean isLocationServiceAvailable() {
-//        LocationManager locationManager = getLocationManager();
-//        return isGpsEnabled(locationManager) && isNetworkBasedGpsEnabled(locationManager);
-//    }
 
     boolean isAnyLocationServiceAvailable() {
         LocationManager locationManager = getLocationManager();
@@ -124,7 +118,6 @@ public class Helper extends ContextWrapper {
             editor.commit();
 
             activity.gpsSettingsCheckbox = (CheckBox) activity.findViewById(R.id.checkbox);
-
             activity.okButton = (Button) activity.findViewById(R.id.okButton);
             activity.okButton.setOnClickListener(activity);
             activity.okButton.setOnTouchListener(new View.OnTouchListener(){
@@ -134,10 +127,8 @@ public class Helper extends ContextWrapper {
                     if (!isAnyLocationServiceAvailable() && activity.gpsSettingsCheckbox.isChecked()) {
                         startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                     }
-
                     activity.topLevelLayout.setVisibility(View.INVISIBLE);
                     activity.gpsSettingsLayout.setVisibility(View.INVISIBLE);
-
                     return false;
                 }
             });
