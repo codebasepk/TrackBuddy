@@ -68,9 +68,9 @@ public class LocationService extends ContextWrapper implements LocationListener,
                 } else {
                     mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                     if (mLocation != null) {
-                        String lat = String.valueOf(mLocation.getLatitude());
-                        String lon = String.valueOf(mLocation.getLongitude());
-                        mHelpers.sendSms(SMSManager.phoneNumber, "TrackBuddy:\n\nCurrent location cannot be acquired at the moment.\n\nLast Known Location of the device is: https://maps.google.com/maps?q=" + lat + "," + lon + "\n\nMake sure the Location Service of the target device is on High-Accuracy Mode.");
+                        String latLast = String.valueOf(mLocation.getLatitude());
+                        String lonLast = String.valueOf(mLocation.getLongitude());
+                        mHelpers.sendSms(SMSManager.phoneNumber, "TrackBuddy:\n\nCurrent location cannot be acquired at the moment.\n\nLast Known Location of the device is:\nhttps://maps.google.com/maps?q=" + latLast + "," + lonLast);
                         Log.i("Location", "Location cannot be acquired. Sending lastKnownLocation SMS...");
                         stopLocationService();
                     } else {
@@ -99,7 +99,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
 
                     counter++;
                     System.out.println("Speed Thread Running... " + counter);
-                    if (speed == 0.0 && counter > 20) {
+                    if (speed == 0.0 && counter > 30) {
                         break;
                     }
                 } while (speed == 0.0);
