@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements ListView.OnItemClickListener,
         Switch.OnCheckedChangeListener, Button.OnClickListener {
@@ -55,10 +56,13 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     View topLevelLayout;
     View gpsSettingsLayout;
 
-
+    ContactsAdapter ma;
 
     int positionGlobal = -1;
     final int dummyPosition = -1;
+
+
+    Button select;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,6 +195,34 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
             case 3:
                 RelativeLayout blacklistRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_four, null);
                 initiateDialog("Blacklist", blacklistRelativeLayout);
+
+                ma = new ContactsAdapter(getApplicationContext());
+                ma.getAllContacts(this.getContentResolver());
+                ListView lv = (ListView) blacklistRelativeLayout.findViewById(R.id.lv);
+
+                lv.setAdapter(ma);
+                lv.setOnItemClickListener(this);
+                lv.setItemsCanFocus(false);
+                lv.setTextFilterEnabled(true);
+
+                select = (Button) blacklistRelativeLayout.findViewById(R.id.buttonWhitelist);
+                select.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        StringBuilder checkedContacts = new StringBuilder();
+
+                        for (int i = 0; i < ma.name1.size(); i++) {
+                            if (ContactsAdapter.mCheckStates.get(i)) {
+                                checkedContacts.append(ma.name1.get(i));
+                                checkedContacts.append("\n");
+                            } else {
+
+                            }
+                        }
+
+                        Toast.makeText(MainActivity.this, checkedContacts, Toast.LENGTH_SHORT).show();
+                    }
+                });
                 break;
         }
         positionGlobal = dummyPosition;

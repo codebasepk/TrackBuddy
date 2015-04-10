@@ -6,52 +6,100 @@
     android:orientation="vertical"
     android:background="@color/background_material_light">
     <TextView
-        android:id="@+id/blacklistInfo"
+        android:id="@+id/whitelistInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp"
         android:layout_centerHorizontal="true"
         android:textStyle="bold"
-        android:text="This feature allows you to block specific buddies from accessing TrackBuddy application."
+        android:text="This feature allows only selected buddies to access TrackBuddy application."
         android:textSize="12dp"/>
 
-    <Switch
-        android:layout_below="@+id/blacklistInfo"
-        android:layout_marginTop="10dp"
+    <!--<Switch-->
+        <!--android:layout_below="@+id/blacklistInfo"-->
+        <!--android:layout_marginTop="10dp"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:id="@+id/switchBlacklist" />-->
+
+    <!--<EditText-->
+        <!--android:layout_marginTop="15dp"-->
+        <!--android:layout_width="230dp"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:inputType="textNoSuggestions"-->
+        <!--android:layout_below="@+id/switchBlacklist"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:hint="Tap to add numbers."-->
+        <!--android:textSize="14dp"-->
+        <!--android:id="@+id/editTextBlacklist"/>-->
+
+    <!--<Button-->
+        <!--style="?android:attr/buttonStyleSmall"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Apply"-->
+        <!--android:id="@+id/applyButtonBlacklist"-->
+        <!--android:layout_below="@+id/editTextBlacklist"-->
+        <!--android:layout_alignRight="@+id/editTextBlacklist"-->
+        <!--android:layout_alignEnd="@+id/editTextBlacklist"/>-->
+
+    <RadioButton
+        android:id="@+id/radioButtonOne"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/switchBlacklist" />
+        android:text="Anyone"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="60dp"
+        android:layout_below="@+id/whitelistInfo"/>
+    <RadioButton
+        android:id="@+id/radioButtonTwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="My contacts only"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="60dp"
+        android:layout_below="@+id/radioButtonOne"/>
+    <RadioButton
+        android:id="@+id/radioButtonThree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Selected contacts only"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="60dp"
+        android:layout_below="@+id/radioButtonTwo"/>
 
-    <EditText
-        android:layout_marginTop="15dp"
-        android:layout_width="230dp"
-        android:layout_height="40dp"
-        android:inputType="textNoSuggestions"
-        android:layout_below="@+id/switchBlacklist"
-        android:layout_centerHorizontal="true"
-        android:hint="Tap to add numbers."
-        android:textSize="14dp"
-        android:id="@+id/editTextBlacklist"/>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/radioButtonThree"
+        android:layout_above="@+id/buttonWhitelist"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:id="@+id/lv"/>
 
     <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Apply"
-        android:id="@+id/applyButtonBlacklist"
-        android:layout_below="@+id/editTextBlacklist"
-        android:layout_alignRight="@+id/editTextBlacklist"
-        android:layout_alignEnd="@+id/editTextBlacklist"/>
 
-    <TextView
-        android:layout_below="@+id/applyButtonBlacklist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="?android:attr/buttonStyleSmall"
+        android:id="@+id/buttonWhitelist"
+        android:layout_width="75dp"
+        android:layout_height="42dp"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_margin="5dp"
-        android:textColor="#669900"
-        android:textSize="10dp"
-        android:text="Info: Speed accuracy varies with devices. Under normal conditions, accuracy range is ±5 Km/h."/>
+        android:layout_margin="1dp"
+        android:text="Select"
+        android:textSize="14dp"/>
+
+    <!--<TextView-->
+        <!--android:layout_below="@+id/applyButtonBlacklist"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_margin="5dp"-->
+        <!--android:textColor="#669900"-->
+        <!--android:textSize="10dp"-->
+        <!--android:text="Info: Speed accuracy varies with devices. Under normal conditions, accuracy range is ±5 Km/h."/>-->
 
 </RelativeLayout>
