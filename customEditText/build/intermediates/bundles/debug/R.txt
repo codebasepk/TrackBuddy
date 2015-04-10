@@ -1,0 +1,4 @@
+int dimen dropdown_item_height 0x7f040000
+int dimen dropdown_item_padding 0x7f040001
+int drawable ic_contact_picture_holo_light 0x7f020000
+int layout contacts_dropdown_item 0x7f030000

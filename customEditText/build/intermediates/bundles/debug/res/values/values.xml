@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/home/imran/AndroidStudioProjects/TrackBuddy/customEditText/src/main/res/values/dimens.xml -->
+    <eat-comment/>
+    <dimen name="dropdown_item_height">48dp</dimen>
+    <dimen name="dropdown_item_padding">10dp</dimen>
+</resources>
