@@ -3,6 +3,7 @@ package com.byteshaft.trackbuddy;
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.provider.MediaStore;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -18,6 +19,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -34,6 +37,11 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     Button sirenApplyButton;
     Button speedApplyButton;
     Button okButton;
+    Button selectCheckedBoxesWhitelist;
+
+
+    RadioGroup radioGroup;
+
 
     EditText trackerEditText;
     EditText sirenEditText;
@@ -56,13 +64,14 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     View topLevelLayout;
     View gpsSettingsLayout;
 
+    ListView lv;
+
     ContactsAdapter ma;
 
     int positionGlobal = -1;
     final int dummyPosition = -1;
 
 
-    Button select;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +85,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         if (helper.isFirstTime(this)) {
             topLevelLayout.setVisibility(View.INVISIBLE);
         }
+
 
         trackerVariable = preferences.getString("trackerVariablePrefs", "TBgps");
         trackerSMSCode = (TextView) findViewById(R.id.trackerSMSCode);
@@ -153,7 +163,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
             case 0:
                 RelativeLayout trackerRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_one, null);
                 final Switch trackerSwitch = (Switch) trackerRelativeLayout.findViewById(R.id.switchTracker);
-                boolean trackerPref = preferences.getBoolean("trackerPreference", true);
+                final boolean trackerPref = preferences.getBoolean("trackerPreference", true);
                 trackerSwitch.setChecked(trackerPref);
                 trackerSwitch.setOnCheckedChangeListener(this);
 
@@ -194,19 +204,43 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 break;
             case 3:
                 RelativeLayout blacklistRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_four, null);
-                initiateDialog("Blacklist", blacklistRelativeLayout);
+                initiateDialog("Whitelist", blacklistRelativeLayout);
 
                 ma = new ContactsAdapter(getApplicationContext());
                 ma.getAllContacts(this.getContentResolver());
-                ListView lv = (ListView) blacklistRelativeLayout.findViewById(R.id.lv);
+                lv = (ListView) blacklistRelativeLayout.findViewById(R.id.lv);
+
+                radioGroup = (RadioGroup) blacklistRelativeLayout.findViewById(R.id.radioGroup);
+
+                selectCheckedBoxesWhitelist = (Button) blacklistRelativeLayout.findViewById(R.id.buttonWhitelist);
+
+
+                radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup group, int checkedId) {
+                        switch (checkedId) {
+                            case R.id.radioButtonOne:
+                                lv.setVisibility(View.GONE);
+                                selectCheckedBoxesWhitelist.setVisibility(View.GONE);
+                                break;
+                            case R.id.radioButtonTwo:
+                                lv.setVisibility(View.GONE);
+                                selectCheckedBoxesWhitelist.setVisibility(View.GONE);
+                                break;
+                            case R.id.radioButtonThree:
+                                lv.setVisibility(View.VISIBLE);
+                                selectCheckedBoxesWhitelist.setVisibility(View.VISIBLE);
+                                break;
+                        }
+                    }
+                });
 
                 lv.setAdapter(ma);
                 lv.setOnItemClickListener(this);
                 lv.setItemsCanFocus(false);
                 lv.setTextFilterEnabled(true);
 
-                select = (Button) blacklistRelativeLayout.findViewById(R.id.buttonWhitelist);
-                select.setOnClickListener(new View.OnClickListener() {
+                selectCheckedBoxesWhitelist.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         StringBuilder checkedContacts = new StringBuilder();

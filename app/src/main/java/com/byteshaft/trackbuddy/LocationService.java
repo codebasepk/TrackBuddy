@@ -106,8 +106,13 @@ public class LocationService extends ContextWrapper implements LocationListener,
 
                 mSpeed = speed;
                 int roundedValueSpeed = (int) mSpeed;
-                mHelpers.sendSms(SMSManager.phoneNumber, "TrackBuddy:\n\nTarget device is currently travelling at the speed of "+ roundedValueSpeed * 3600 / 1000 + " Km/h\n\n(Accuracy +/- 5 Km/h)");
-                Log.i("Speed", "Current Speed acquired. Sending SMS...");
+                if (roundedValueSpeed != 0) {
+                    mHelpers.sendSms(SMSManager.phoneNumber, "TrackBuddy:\n\nTarget device is travelling at the speed of "+ roundedValueSpeed * 3600 / 1000 + " Km/h\n\n(Accuracy +/- 5 Km/h)");
+                    Log.i("Speed", "Current Speed acquired. Sending SMS...");
+                } else {
+                    mHelpers.sendSms(SMSManager.phoneNumber, "TrackBuddy:\n\nTarget device appears to be still.");
+                    Log.i("Speed", "Target device appears to be still. Sending SMS...");
+                }
                 speed = 0.0;
                 stopLocationService();
             }
@@ -157,7 +162,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
 
         locationChangedCounter++;
 
-        if (locationChangedCounter == 3) {
+        if (locationChangedCounter == 5) {
             mLocation = location;
         }
         speed = location.getSpeed();
