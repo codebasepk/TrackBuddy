@@ -9,9 +9,10 @@
         android:id="@+id/whitelistInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="7dp"
-        android:layout_marginLeft="7dp"
-        android:layout_marginRight="7dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="2dp"
         android:layout_centerHorizontal="true"
         android:textStyle="bold"
         android:text="This feature decides which phone numbers can access TrackBuddy application."
@@ -24,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="60dp"
-        android:onClick="onRadioButtonClick">
+        android:layout_marginBottom="2dp">
         <RadioButton
             android:id="@+id/radioButtonOne"
             android:layout_width="wrap_content"

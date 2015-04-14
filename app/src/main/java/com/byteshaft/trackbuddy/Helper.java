@@ -4,20 +4,27 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
+import android.telephony.PhoneNumberUtils;
 import android.telephony.SmsManager;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Helper extends ContextWrapper {
@@ -57,7 +64,7 @@ public class Helper extends ContextWrapper {
     }
 
     void playSiren() {
-        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.alarm);
+        MediaPlayer mediaPlayer = MediaPlayer.create(this, R.raw.siren);
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         AudioManager audioManager = getAudioManager();
         setVolumeToMax(audioManager);
@@ -87,13 +94,10 @@ public class Helper extends ContextWrapper {
         SharedPreferences preferences = activity.getPreferences(MODE_PRIVATE);
         boolean ranBefore = preferences.getBoolean("RanBefore", false);
         if (!ranBefore) {
-
             activity.topLevelLayout.setVisibility(View.VISIBLE);
-
             if (!isAnyLocationServiceAvailable()) {
                activity.gpsSettingsLayout.setVisibility(View.VISIBLE);
             }
-
             ImageView myView = (ImageView) activity.findViewById(R.id.arrowImage);
 
             ObjectAnimator fadeOut = ObjectAnimator.ofFloat(myView, "alpha",  1f, .3f);
@@ -115,7 +119,7 @@ public class Helper extends ContextWrapper {
 
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean("RanBefore", true);
-            editor.commit();
+            editor.apply();
 
             activity.gpsSettingsCheckbox = (CheckBox) activity.findViewById(R.id.checkbox);
             activity.okButton = (Button) activity.findViewById(R.id.okButton);
@@ -134,6 +138,49 @@ public class Helper extends ContextWrapper {
             });
         }
         return ranBefore;
+    }
+
+    private Cursor getAllContacts(ContentResolver cr) {
+        return cr.query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null,
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC"
+        );
+    }
+
+    List<String> getAllContactNames() {
+        List<String> contactNames = new ArrayList<String>();
+        Cursor cursor = getAllContacts(getContentResolver());
+        while (cursor.moveToNext()) {
+            String name = cursor.getString(
+                    cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            contactNames.add(name);
+        }
+        cursor.close();
+        return contactNames;
+    }
+
+    List<String> getAllContactNumbers() {
+        List<String> contactNumbers = new ArrayList<String>();
+        Cursor cursor = getAllContacts(getContentResolver());
+        while (cursor.moveToNext()) {
+            String number = cursor.getString(
+                    cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            contactNumbers.add(number);
+        }
+        cursor.close();
+        return contactNumbers;
+    }
+
+    public static boolean contactExists(Context context, String number, ContentResolver contentResolver) {
+        Cursor phones = contentResolver.query(ContactsContract.CommonDataKinds.Phone.
+                CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+        while (phones.moveToNext()){
+            String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            if(PhoneNumberUtils.compare(number, phoneNumber)){
+                return true;
+            }
+        }
+        return false;
     }
 }
 
