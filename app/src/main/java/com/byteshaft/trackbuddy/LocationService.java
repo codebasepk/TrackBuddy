@@ -2,6 +2,8 @@ package com.byteshaft.trackbuddy;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +15,8 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationListener;
+
+import java.util.List;
 
 
 public class LocationService extends ContextWrapper implements LocationListener,
@@ -37,6 +41,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
 
     void acquireLocation() {
         settingUpGoogleApiClient();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -54,13 +59,20 @@ public class LocationService extends ContextWrapper implements LocationListener,
                         break;
                     }
                 } while (mLocation == null);
-
+                String address;
                 if (mLocation != null) {
                     String lat = String.valueOf(mLocation.getLatitude());
                     String lon = String.valueOf(mLocation.getLongitude());
                     accuracy = mLocation.getAccuracy();
+                    Geocoder geocoder = new Geocoder(getApplicationContext());
+                    try {
+                        List<Address> result = geocoder.getFromLocation(mLocation.getLatitude(), mLocation.getLongitude(), 1);
+                        address = addressToText(result.get(0)).toString();
+                    }catch (Exception e) {
+                        address = getApplicationContext().getResources().getString(R.string.location_no_acuracy);
+                    }
                     int roundedAccuracy = (int) accuracy;
-                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy:\n\nCurrent location of the target device is:\nhttps://maps.google.com/maps?q=" + lat + "," + lon + "\n\n(Accuracy: " + roundedAccuracy + "m)");
+                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy \n\nMy current location is:\nhttps://maps.google.com/maps?q=" + lat + "," + lon + "\n\n" + address + "\n\n(Accuracy: " + roundedAccuracy + "m)");
                     Log.i("Location", "Location acquired. Sending SMS...");
                     stopLocationService();
                     mLocation = null;
@@ -126,6 +138,20 @@ public class LocationService extends ContextWrapper implements LocationListener,
                 .addApi(LocationServices.API)
                 .build();
         mGoogleApiClient.connect();
+    }
+
+    private StringBuffer addressToText(Address address) throws Exception {
+        if (address == null) throw new Exception("No address provided");
+        final StringBuffer addressText = new StringBuffer();
+        for (int i = 0, max = address.getMaxAddressLineIndex(); i < max; ++i) {
+            addressText.append(address.getAddressLine(i));
+            if ((i+1) < max) {
+                addressText.append(", ");
+            }
+        }
+        addressText.append(", ");
+        addressText.append(address.getCountryName());
+        return addressText;
     }
 
     protected void createLocationRequest() {
