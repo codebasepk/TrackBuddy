@@ -26,7 +26,6 @@ public class LocationService extends ContextWrapper implements LocationListener,
     int locationChangedCounter = 0;
 
     static double speed;
-    static float direction;
 
     LocationRequest mLocationRequest;
     Location mLocation;
@@ -61,7 +60,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
                     String lon = String.valueOf(mLocation.getLongitude());
                     accuracy = mLocation.getAccuracy();
                     int roundedAccuracy = (int) accuracy;
-                    mHelpers.sendSms(SMSManager.phoneNumber, "TrackBuddy:\n\nCurrent location of the target device is:\nhttps://maps.google.com/maps?q=" + lat + "," + lon + "\n\n(Accuracy: " + roundedAccuracy + "m)");
+                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy:\n\nCurrent location of the target device is:\nhttps://maps.google.com/maps?q=" + lat + "," + lon + "\n\n(Accuracy: " + roundedAccuracy + "m)");
                     Log.i("Location", "Location acquired. Sending SMS...");
                     stopLocationService();
                     mLocation = null;
@@ -70,11 +69,11 @@ public class LocationService extends ContextWrapper implements LocationListener,
                     if (mLocation != null) {
                         String latLast = String.valueOf(mLocation.getLatitude());
                         String lonLast = String.valueOf(mLocation.getLongitude());
-                        mHelpers.sendSms(SMSManager.phoneNumber, "TrackBuddy:\n\nCurrent location cannot be acquired at the moment.\n\nLast Known Location of the device is:\nhttps://maps.google.com/maps?q=" + latLast + "," + lonLast);
+                        mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy:\n\nCurrent location cannot be acquired at the moment.\n\nLast Known Location of the device is:\nhttps://maps.google.com/maps?q=" + latLast + "," + lonLast);
                         Log.i("Location", "Location cannot be acquired. Sending lastKnownLocation SMS...");
                         stopLocationService();
                     } else {
-                        mHelpers.sendSms(SMSManager.phoneNumber, "TrackBuddy:\n\nTarget device cannot be located at the moment.\n\nMake sure the Location Service of the target device is on High-Accuracy Mode.");
+                        mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy:\n\nTarget device cannot be located at the moment.\n\nMake sure the Location Service of the target device is on High-Accuracy Mode.");
                         Log.i("Location", "Device cannot be Located. Sending SMS...");
                         stopLocationService();
                     }
@@ -107,10 +106,10 @@ public class LocationService extends ContextWrapper implements LocationListener,
                 mSpeed = speed;
                 int roundedValueSpeed = (int) mSpeed;
                 if (roundedValueSpeed != 0) {
-                    mHelpers.sendSms(SMSManager.phoneNumber, "TrackBuddy:\n\nTarget device is travelling at the speed of "+ roundedValueSpeed * 3600 / 1000 + " Km/h\n\n(Accuracy +/- 5 Km/h)");
+                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy:\n\nTarget device is travelling at the speed of "+ roundedValueSpeed * 3600 / 1000 + " Km/h\n\n(Accuracy: +/- 5 Km/h)");
                     Log.i("Speed", "Current Speed acquired. Sending SMS...");
                 } else {
-                    mHelpers.sendSms(SMSManager.phoneNumber, "TrackBuddy:\n\nTarget device appears to be still.");
+                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy:\n\nTarget device appears to be still.");
                     Log.i("Speed", "Target device appears to be still. Sending SMS...");
                 }
                 speed = 0.0;
@@ -166,7 +165,6 @@ public class LocationService extends ContextWrapper implements LocationListener,
             mLocation = location;
         }
         speed = location.getSpeed();
-        direction = location.getBearing();
         System.out.println("onLocationChanged CALLED..." + locationChangedCounter);
     }
 }
