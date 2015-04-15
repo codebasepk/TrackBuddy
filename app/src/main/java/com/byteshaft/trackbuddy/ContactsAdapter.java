@@ -2,6 +2,8 @@ package com.byteshaft.trackbuddy;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,12 +22,14 @@ public class ContactsAdapter extends BaseAdapter implements CompoundButton.OnChe
     LayoutInflater mInflater;
     TextView tv1, tv;
     CheckBox cb;
+    SharedPreferences preferences;
 
-    public static List<String> name1;
-    public static List<String> phno1;
+    public List<String> name1;
+    public List<String> phno1;
 
     ContactsAdapter(Context context) {
         Helper helper = new Helper(context.getApplicationContext());
+        preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
         name1 = helper.getAllContactNames();
         phno1 = helper.getAllContactNumbers();
         if (mCheckStates == null) {
@@ -81,10 +85,20 @@ public class ContactsAdapter extends BaseAdapter implements CompoundButton.OnChe
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         mCheckStates.put((Integer) buttonView.getTag(), isChecked);
+
+        StringBuilder checkedContacts = new StringBuilder();
+        for (int i = 0; i < name1.size(); i++) {
+            if (mCheckStates.get(i)) {
+                checkedContacts.append(phno1.get(i));
+                checkedContacts.append(",");
+                checkedContacts.append(" ");
+            }
+        }
+        preferences.edit().putString("checkedContactsPrefs", checkedContacts.toString()).apply();
     }
 
-    private static String[] getCheckedContacts() {
-        String string = MainActivity.checkedContactsPrefs;
+    private String[] getCheckedContacts() {
+        String string = preferences.getString("checkedContactsPrefs", " ");
         return string.split(",");
     }
 

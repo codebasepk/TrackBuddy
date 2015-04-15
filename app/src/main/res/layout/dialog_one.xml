@@ -10,7 +10,9 @@
         android:id="@+id/trackerInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
         android:layout_centerHorizontal="true"
         android:textStyle="bold"
         android:text="This feature allows your device to be tracked using Android Location Service."
@@ -25,7 +27,7 @@
         android:id="@+id/switchTracker"/>
 
     <EditText
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:layout_width="230dp"
         android:layout_height="40dp"
         android:longClickable="false"
@@ -37,13 +39,23 @@
         android:textSize="14dp"
         android:id="@+id/editTextTracker"/>
 
+    <CheckBox
+        android:id="@+id/trackerCheckbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editTextTracker"
+        android:layout_centerHorizontal="true"
+        android:text="Address Reporting (Requires Internet)"
+        android:textSize="11dp"
+        android:textColor="#0099CC"/>
+
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Apply"
         android:id="@+id/applyButtonTracker"
-        android:layout_below="@+id/editTextTracker"
+        android:layout_below="@+id/trackerCheckbox"
         android:layout_alignRight="@+id/editTextTracker"
         android:layout_alignEnd="@+id/editTextTracker"
         android:enabled="false"/>
@@ -53,8 +65,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_margin="5dp"
         android:textColor="#669900"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="5dp"
         android:textSize="10dp"
         android:text="Info: Tracking accuracy varies with devices. For optimum results, switch your location settings to High-Accuracy Mode."/>
 

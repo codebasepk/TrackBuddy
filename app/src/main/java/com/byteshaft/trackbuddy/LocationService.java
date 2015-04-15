@@ -26,6 +26,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
     private static final long FASTEST_INTERVAL = 0;
     private Helper mHelpers = null;
     private GoogleApiClient mGoogleApiClient;
+    String address;
 
     int locationChangedCounter = 0;
 
@@ -59,21 +60,25 @@ public class LocationService extends ContextWrapper implements LocationListener,
                         break;
                     }
                 } while (mLocation == null);
-                String address;
                 if (mLocation != null) {
                     String lat = String.valueOf(mLocation.getLatitude());
                     String lon = String.valueOf(mLocation.getLongitude());
                     accuracy = mLocation.getAccuracy();
+                    int roundedAccuracy = (int) accuracy;
+                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy \n\nMy current location is:\nhttps://maps.google.com/maps?q=" + lat + "," + lon + "\n\n(Accuracy: " + roundedAccuracy + "m)");
+                    Log.i("Location", "Location acquired. Sending SMS...");
+
                     Geocoder geocoder = new Geocoder(getApplicationContext());
                     try {
                         List<Address> result = geocoder.getFromLocation(mLocation.getLatitude(), mLocation.getLongitude(), 1);
                         address = addressToText(result.get(0)).toString();
                     }catch (Exception e) {
-                        address = getApplicationContext().getResources().getString(R.string.location_no_acuracy);
+                        address = null;
                     }
-                    int roundedAccuracy = (int) accuracy;
-                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy \n\nMy current location is:\nhttps://maps.google.com/maps?q=" + lat + "," + lon + "\n\n" + address + "\n\n(Accuracy: " + roundedAccuracy + "m)");
-                    Log.i("Location", "Location acquired. Sending SMS...");
+                    if (address != null && SMSManager.trackerCheckbox) {
+                        mHelpers.sendSms(SMSManager.originatingAddress, address);
+                        Log.i("Location", "Address acquired. Sending SMS...");
+                    }
                     stopLocationService();
                     mLocation = null;
                 } else {
@@ -85,7 +90,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
                         Log.i("Location", "Location cannot be acquired. Sending lastKnownLocation SMS...");
                         stopLocationService();
                     } else {
-                        mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy:\n\nTarget device cannot be located at the moment.\n\nMake sure the Location Service of the target device is on High-Accuracy Mode.");
+                        mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy:\n\nDevice cannot be located at the moment.\n\nMake sure the Location Service of the target device is on High-Accuracy Mode.");
                         Log.i("Location", "Device cannot be Located. Sending SMS...");
                         stopLocationService();
                     }
@@ -151,6 +156,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
         }
         addressText.append(", ");
         addressText.append(address.getCountryName());
+        addressText.append(".");
         return addressText;
     }
 

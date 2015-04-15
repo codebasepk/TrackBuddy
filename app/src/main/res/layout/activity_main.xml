@@ -163,13 +163,12 @@ android:id="@+id/top_layout">
             android:layout_alignBottom="@+id/infoTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="18dp"
             android:layout_centerHorizontal="true"
             android:textColor="@color/primary_material_light"
             android:textSize="15dp"
             android:textStyle="bold"
             android:text="GPS is turned off from Android System Settings"/>
-
 
         <TextView
             android:id="@+id/infoTextView"
@@ -197,7 +196,6 @@ android:id="@+id/top_layout">
             />
 
     </RelativeLayout>
-
 
     <Button
         android:id="@+id/okButton"

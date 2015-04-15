@@ -25,44 +25,35 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="60dp"
-        android:layout_marginBottom="2dp">
+        android:layout_marginBottom="10dp">
         <RadioButton
             android:id="@+id/radioButtonOne"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Anyone"/>
+            android:text="Anyone"
+            android:textSize="12dp"/>
         <RadioButton
             android:id="@+id/radioButtonTwo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="My contacts only"/>
+            android:text="My contacts only"
+            android:textSize="12dp"/>
         <RadioButton
             android:id="@+id/radioButtonThree"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Selected contacts only"/>
+            android:text="Selected contacts only"
+            android:textSize="12dp"/>
     </RadioGroup>
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/radioGroup"
-        android:layout_above="@+id/buttonWhitelist"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
+        android:layout_marginBottom="5dp"
         android:id="@+id/lv"
-        android:visibility="gone"/>
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:id="@+id/buttonWhitelist"
-        android:layout_width="75dp"
-        android:layout_height="42dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="1dp"
-        android:text="Select"
-        android:textSize="14dp"
         android:visibility="gone"/>
 
 </RelativeLayout>
