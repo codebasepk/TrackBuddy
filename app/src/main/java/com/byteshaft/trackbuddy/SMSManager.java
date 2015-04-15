@@ -22,6 +22,7 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
     SharedPreferences preferences;
     Helper helper;
     boolean trackerBool, sirenBool, speedBool;
+    static boolean trackerCheckbox;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -32,6 +33,8 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
         trackerBool = preferences.getBoolean("trackerPreference", true);
         sirenBool = preferences.getBoolean("sirenPreference", false);
         speedBool = preferences.getBoolean("speedPreference", true);
+
+        trackerCheckbox = preferences.getBoolean("trackerCheckboxPrefs", false);
 
         Bundle bundle = intent.getExtras();
         Object[] pdus = (Object[]) bundle.get("pdus");
@@ -45,12 +48,12 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
         if (MainActivity.radioInt == 0) {
             messageHandler();
         } else if (MainActivity.radioInt == 1) {
-            if (Helper.contactExists(mContext, originatingAddress, mContext.getContentResolver())) {
+            if (helper.contactExists(originatingAddress, mContext.getContentResolver())) {
                 messageHandler();
             }
         } else if (MainActivity.radioInt == 2) {
             String selectedContacts = preferences.getString("checkedContactsPrefs", " ");
-            if (PhoneNumberUtils.compare(selectedContacts, originatingAddress)) {
+            if (helper.contactExistsInWhitelist(originatingAddress, selectedContacts)) {
                 messageHandler();
             }
         }

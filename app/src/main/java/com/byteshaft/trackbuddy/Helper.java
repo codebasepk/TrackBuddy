@@ -123,7 +123,7 @@ public class Helper extends ContextWrapper {
 
             activity.gpsSettingsCheckbox = (CheckBox) activity.findViewById(R.id.checkbox);
             activity.okButton = (Button) activity.findViewById(R.id.okButton);
-            activity.okButton.setOnClickListener(activity);
+//            activity.okButton.setOnClickListener(activity);
             activity.okButton.setOnTouchListener(new View.OnTouchListener(){
 
                 @Override
@@ -171,9 +171,8 @@ public class Helper extends ContextWrapper {
         return contactNumbers;
     }
 
-    public static boolean contactExists(Context context, String number, ContentResolver contentResolver) {
-        Cursor phones = contentResolver.query(ContactsContract.CommonDataKinds.Phone.
-                CONTENT_URI, null, null, null, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC");
+    public boolean contactExists(String number, ContentResolver contentResolver) {
+        Cursor phones = getAllContacts(contentResolver);
         while (phones.moveToNext()){
             String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
             if(PhoneNumberUtils.compare(number, phoneNumber)){
@@ -182,7 +181,19 @@ public class Helper extends ContextWrapper {
         }
         return false;
     }
+
+    public boolean contactExistsInWhitelist(String number, String checkedContacts) {
+        boolean contactExistsInWhitelist = false;
+        String[] checkContactsArray = getCheckedContacts(checkedContacts);
+        for(String contact : checkContactsArray) {
+            if (PhoneNumberUtils.compare(contact, number)) {
+                contactExistsInWhitelist = true;
+            }
+        }
+        return contactExistsInWhitelist;
+    }
+
+    private String[] getCheckedContacts(String checkedContacts) {
+        return checkedContacts.split(",");
+    }
 }
-
-
-

@@ -22,7 +22,6 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements ListView.OnItemClickListener,
         Switch.OnCheckedChangeListener, Button.OnClickListener {
@@ -31,15 +30,14 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     private ListView listView;
     private ActionBarDrawerToggle drawerListener;
 
-    Button trackerApplyButton, sirenApplyButton, speedApplyButton, okButton, selectCheckedBoxesWhitelist;
+    Button trackerApplyButton, sirenApplyButton, speedApplyButton, okButton;
     RadioGroup radioGroup;
     EditText trackerEditText, sirenEditText, speedEditText;
     TextView trackerSMSCode, sirenSMSCode, speedSMSCode;
     SharedPreferences preferences;
     String trackerVariable, sirenVariable, speedVariable;
-    static String checkedContactsPrefs;
     Dialog dialog;
-    CheckBox gpsSettingsCheckbox;
+    CheckBox gpsSettingsCheckbox, trackerCheckbox;
     View topLevelLayout, gpsSettingsLayout;
     ListView lv;
     ContactsAdapter ma;
@@ -75,8 +73,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         speedVariable = preferences.getString("speedVariablePrefs", "TBspeed");
         speedSMSCode = (TextView) findViewById(R.id.speedSMSCode);
         speedSMSCode.setText("Speed Code: " + speedVariable);
-
-        checkedContactsPrefs = preferences.getString("checkedContactsPrefs", " ");
 
         DrawerAdapter myAdapter = new DrawerAdapter(this);
 
@@ -147,6 +143,9 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
 
                 trackerApplyButton = (Button) trackerRelativeLayout.findViewById(R.id.applyButtonTracker);
                 trackerEditText = (EditText) trackerRelativeLayout.findViewById(R.id.editTextTracker);
+                trackerCheckbox = (CheckBox) trackerRelativeLayout.findViewById(R.id.trackerCheckbox);
+                trackerCheckbox.setChecked(preferences.getBoolean("trackerCheckboxPrefs", false));
+                trackerCheckbox.setOnCheckedChangeListener(this);
                 setOnTextChangeListenerForInputField(trackerEditText, trackerApplyButton);
                 setOnClickListenerForEditText(trackerEditText);
                 trackerApplyButton.setOnClickListener(this);
@@ -184,8 +183,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 blacklistRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_four, null);
                 radioGroup = (RadioGroup) blacklistRelativeLayout.findViewById(R.id.radioGroup);
 
-                selectCheckedBoxesWhitelist = (Button) blacklistRelativeLayout.findViewById(R.id.buttonWhitelist);
-
                 radioInt = preferences.getInt("radioPrefs", 0);
 
                 initiateDialog("Whitelist", blacklistRelativeLayout);
@@ -200,7 +197,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 } else if (radioInt == 2) {
                     radioGroup.check(R.id.radioButtonThree);
                     lv.setVisibility(View.VISIBLE);
-                    selectCheckedBoxesWhitelist.setVisibility(View.VISIBLE);
                 }
 
                 radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -210,18 +206,15 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                         switch (checkedId) {
                             case R.id.radioButtonOne:
                                 lv.setVisibility(View.GONE);
-                                selectCheckedBoxesWhitelist.setVisibility(View.GONE);
                                 preferences.edit().putInt("radioPrefs", 0).apply();
                             break;
                             case R.id.radioButtonTwo:
                                 lv.setVisibility(View.GONE);
-                                selectCheckedBoxesWhitelist.setVisibility(View.GONE);
                                 preferences.edit().putInt("radioPrefs", 1).apply();
                                 preferences.edit().putString("whitelistContacts", ContactsAdapter.phoneNumber).apply();
                             break;
                             case R.id.radioButtonThree:
                                 lv.setVisibility(View.VISIBLE);
-                                selectCheckedBoxesWhitelist.setVisibility(View.VISIBLE);
                                 preferences.edit().putInt("radioPrefs", 2).apply();
                             break;
                         }
@@ -233,23 +226,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 lv.setItemsCanFocus(false);
                 lv.setTextFilterEnabled(true);
 
-                selectCheckedBoxesWhitelist.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        StringBuilder checkedContacts = new StringBuilder();
-                        for (int i = 0; i < ContactsAdapter.name1.size(); i++) {
-                            if (ContactsAdapter.mCheckStates.get(i)) {
-                                checkedContacts.append(ContactsAdapter.phno1.get(i));
-                                checkedContacts.append(",");
-                            }
-                        }
-                        Toast.makeText(MainActivity.this, "Settings Applied", Toast.LENGTH_SHORT).show();
-                        MainActivity.checkedContactsPrefs = " ";
-
-                        preferences.edit().putString("checkedContactsPrefs", checkedContacts.toString()).apply();
-                        dialog.dismiss();
-                    }
-                });
                 break;
         }
         positionGlobal = dummyPosition;
@@ -308,6 +284,8 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
             case R.id.switchSpeed:
                 preferences.edit().putBoolean("speedPreference", isChecked).apply();
             break;
+            case R.id.trackerCheckbox:
+                preferences.edit().putBoolean("trackerCheckboxPrefs", isChecked).apply();
         }
     }
 
