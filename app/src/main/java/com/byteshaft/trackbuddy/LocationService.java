@@ -6,13 +6,12 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationListener;
 
@@ -28,6 +27,8 @@ public class LocationService extends ContextWrapper implements LocationListener,
     private GoogleApiClient mGoogleApiClient;
     String address;
 
+    int speedRecursionCounter = 0;
+    int locationRecursionCounter = 0;
     int locationChangedCounter = 0;
 
     static double speed;
@@ -38,104 +39,99 @@ public class LocationService extends ContextWrapper implements LocationListener,
     public LocationService(Context context) {
         super(context);
         mHelpers = new Helper(context);
+        connectingGoogleApiClient();
     }
 
     void acquireLocation() {
-        settingUpGoogleApiClient();
-
-        new Thread(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-            double accuracy;
-                int counter = 0;
-                do {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    counter++;
-                    System.out.println("Tracker Thread Running... " + counter);
-                    if (counter > 120 && mLocation == null) {
-                        break;
-                    }
-                } while (mLocation == null);
-                if (mLocation != null) {
-                    String lat = String.valueOf(mLocation.getLatitude());
-                    String lon = String.valueOf(mLocation.getLongitude());
-                    accuracy = mLocation.getAccuracy();
-                    int roundedAccuracy = (int) accuracy;
-                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy \n\nMy current location is:\nhttps://maps.google.com/maps?q=" + lat + "," + lon + "\n\n(Accuracy: " + roundedAccuracy + "m)");
-                    Log.i("Location", "Location acquired. Sending SMS...");
-
-                    Geocoder geocoder = new Geocoder(getApplicationContext());
-                    try {
-                        List<Address> result = geocoder.getFromLocation(mLocation.getLatitude(), mLocation.getLongitude(), 1);
-                        address = addressToText(result.get(0)).toString();
-                    }catch (Exception e) {
-                        address = null;
-                    }
-                    if (address != null && SMSManager.trackerCheckbox) {
-                        mHelpers.sendSms(SMSManager.originatingAddress, address);
-                        Log.i("Location", "Address acquired. Sending SMS...");
-                    }
-                    stopLocationService();
-                    mLocation = null;
-                } else {
+                if (mLocation == null && locationRecursionCounter > 120) {
                     mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                     if (mLocation != null) {
                         String latLast = String.valueOf(mLocation.getLatitude());
                         String lonLast = String.valueOf(mLocation.getLongitude());
-                        mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy:\n\nCurrent location cannot be acquired at the moment.\n\nLast Known Location of the device is:\nhttps://maps.google.com/maps?q=" + latLast + "," + lonLast);
-                        Log.i("Location", "Location cannot be acquired. Sending lastKnownLocation SMS...");
+                        mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nCurrent location cannot be acquired at the moment."
+                                + "\n\nLast Known Location of the device is:\nhttps://maps.google.com/maps?q="
+                                + latLast
+                                + ","
+                                + lonLast
+                        );
+                        Log.i("TrackBuddy", "Location cannot be acquired. Sending lastKnownLocation SMS...");
                         stopLocationService();
                     } else {
-                        mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy:\n\nDevice cannot be located at the moment.\n\nMake sure the Location Service of the target device is on High-Accuracy Mode.");
-                        Log.i("Location", "Device cannot be Located. Sending SMS...");
+                        mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nDevice cannot be located at the moment."
+                                + "\n\nMake sure the Location Service of the target device is on High-Accuracy Mode."
+                        );
+                        Log.i("TrackBuddy", "Device cannot be Located. Sending SMS...");
                         stopLocationService();
                     }
+                } else if (mLocation == null) {
+                    acquireLocation();
+                    locationRecursionCounter++;
+                    Log.i("TrackBuddy", "Tracker Thread Running... " + locationRecursionCounter);
+                } else {
+                    double accuracy;
+                    String lat = String.valueOf(mLocation.getLatitude());
+                    String lon = String.valueOf(mLocation.getLongitude());
+                    accuracy = mLocation.getAccuracy();
+                    int roundedAccuracy = (int) accuracy;
+                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nMy current location is:"
+                            + "\nhttps://maps.google.com/maps?q="
+                            + lat
+                            + ","
+                            + lon
+                            +"\n\n(Accuracy: "
+                            + roundedAccuracy
+                            + "m)"
+                    );
+                    Log.i("TrackBuddy", "Current location acquired. Sending SMS...");
+
+                    if (SMSManager.trackerCheckbox) {
+                        Geocoder geocoder = new Geocoder(getApplicationContext());
+                        try {
+                            List<Address> result = geocoder.getFromLocation(mLocation.getLatitude(), mLocation.getLongitude(), 1);
+                            address = addressToText(result.get(0)).toString();
+                        }catch (Exception e) {
+                            address = null;
+                        }
+                        if (address != null) {
+                            mHelpers.sendSms(SMSManager.originatingAddress, address);
+                            Log.i("TrackBuddy", "Address acquired. Sending SMS...");
+                        }
+                    }
+                    stopLocationService();
+                    mLocation = null;
                 }
             }
-        }).start();
+        },1000);
     }
 
     void acquireSpeed() {
-        settingUpGoogleApiClient();
-        new Thread(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                double mSpeed;
-                int counter = 0;
-                do {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    counter++;
-                    System.out.println("Speed Thread Running... " + counter);
-                    if (speed == 0.0 && counter > 30) {
-                        break;
-                    }
-                } while (speed == 0.0);
-
-                mSpeed = speed;
-                int roundedValueSpeed = (int) mSpeed;
-                if (roundedValueSpeed != 0) {
-                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy:\n\nTarget device is travelling at the speed of "+ roundedValueSpeed * 3600 / 1000 + " Km/h\n\n(Accuracy: +/- 5 Km/h)");
-                    Log.i("Speed", "Current Speed acquired. Sending SMS...");
+                if (speed == 0.0 && speedRecursionCounter > 30) {
+                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nTarget device appears to be still.");
+                    Log.i("TrackBuddy", "Target device appears to be still. Sending SMS...");
+                    stopLocationService();
+                } else if (speed == 0.0) {
+                    acquireSpeed();
+                    speedRecursionCounter++;
+                    Log.i("TrackBuddy", "Speed Thread Running..." + speedRecursionCounter);
                 } else {
-                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy:\n\nTarget device appears to be still.");
-                    Log.i("Speed", "Target device appears to be still. Sending SMS...");
+                    int roundedValueSpeed = (int) speed;
+                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nTarget device is travelling at the speed of "
+                            + roundedValueSpeed * 3600 / 1000
+                            + " Km/h\n\n(Accuracy: +/- 5 Km/h)"
+                    );
+                    Log.i("TrackBuddy", "Speed acquired. Sending SMS...");
                 }
-                speed = 0.0;
-                stopLocationService();
             }
-        }).start();
+        },1000);
     }
 
-    private void settingUpGoogleApiClient() {
+    private void connectingGoogleApiClient() {
         createLocationRequest();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -168,7 +164,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
     }
 
     public void startLocationUpdates() {
-        PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
+        LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
     }
 
@@ -190,14 +186,12 @@ public class LocationService extends ContextWrapper implements LocationListener,
 
     @Override
     public void onLocationChanged(Location location) {
-
         locationChangedCounter++;
-
         if (locationChangedCounter == 5) {
             mLocation = location;
         }
         speed = location.getSpeed();
-        System.out.println("onLocationChanged CALLED..." + locationChangedCounter);
+        Log.i("TrackBuddy", "onLocationChanged CALLED..." + locationChangedCounter);
     }
 }
 

@@ -123,12 +123,11 @@ public class Helper extends ContextWrapper {
 
             activity.gpsSettingsCheckbox = (CheckBox) activity.findViewById(R.id.checkbox);
             activity.okButton = (Button) activity.findViewById(R.id.okButton);
-//            activity.okButton.setOnClickListener(activity);
             activity.okButton.setOnTouchListener(new View.OnTouchListener(){
 
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    if (!isAnyLocationServiceAvailable() && activity.gpsSettingsCheckbox.isChecked()) {
+                    if (activity.gpsSettingsCheckbox.isChecked()) {
                         startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                     }
                     activity.topLevelLayout.setVisibility(View.INVISIBLE);

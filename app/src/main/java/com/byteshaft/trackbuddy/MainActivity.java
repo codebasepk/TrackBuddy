@@ -1,8 +1,10 @@
 package com.byteshaft.trackbuddy;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -23,6 +25,9 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+
 public class MainActivity extends ActionBarActivity implements ListView.OnItemClickListener,
         Switch.OnCheckedChangeListener, Button.OnClickListener {
 
@@ -33,26 +38,38 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     Button trackerApplyButton, sirenApplyButton, speedApplyButton, okButton;
     RadioGroup radioGroup;
     EditText trackerEditText, sirenEditText, speedEditText;
-    TextView trackerSMSCode, sirenSMSCode, speedSMSCode;
+    TextView trackerSMSCode, sirenSMSCode, speedSMSCode,topInfoMainLayout ;
     SharedPreferences preferences;
     String trackerVariable, sirenVariable, speedVariable;
     Dialog dialog;
     CheckBox gpsSettingsCheckbox, trackerCheckbox;
     View topLevelLayout, gpsSettingsLayout;
+    RelativeLayout warningGooglePlayservices;
     ListView lv;
     ContactsAdapter ma;
     int positionGlobal = -1;
     final int dummyPosition = -1;
     static int radioInt;
-    RelativeLayout blacklistRelativeLayout;
-    LayoutInflater layoutInflater;
+    int googlePlayServicesAvailable;
 
+    LayoutInflater layoutInflater;
+    
+    private static class Settings {
+        final static int TRACKER = 0;
+        final static int SIREN = 1;
+        final static int SPEED = 2;
+        final static int WHITELIST = 3;
+    }
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().setTitle("Home");
         Helper mHelpers = new Helper(this);
+
+        googlePlayServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable
+                (getApplicationContext());
 
         preferences = mHelpers.getPreferenceManager();
 
@@ -73,6 +90,9 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         speedVariable = preferences.getString("speedVariablePrefs", "TBspeed");
         speedSMSCode = (TextView) findViewById(R.id.speedSMSCode);
         speedSMSCode.setText("Speed Code: " + speedVariable);
+
+        topInfoMainLayout = (TextView) findViewById(R.id.topInfo);
+        warningGooglePlayservices = (RelativeLayout) findViewById(R.id.playservices_layout);
 
         DrawerAdapter myAdapter = new DrawerAdapter(this);
 
@@ -124,38 +144,37 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         drawerLayout.closeDrawer(listView);
     }
 
-    public void selectItem(int position) {
+    private void selectItem(int position) {
         listView.setItemChecked(position, true);
         setTitle(DrawerAdapter.items[position]);
         positionGlobal = position;
     }
 
-    public void popDialog(int window) {
+    private void popDialog(int window) {
         dialog = new Dialog(MainActivity.this, R.style.PauseDialog);
 
         switch (window) {
-            case 0:
-                RelativeLayout trackerRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_one, null);
-                final Switch trackerSwitch = (Switch) trackerRelativeLayout.findViewById(R.id.switchTracker);
-                final boolean trackerPref = preferences.getBoolean("trackerPreference", true);
-                trackerSwitch.setChecked(trackerPref);
+            case Settings.TRACKER:
+                RelativeLayout trackerLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_one, null);
+                Switch trackerSwitch = (Switch) trackerLayout.findViewById(R.id.switchTracker);
+                trackerSwitch.setChecked(preferences.getBoolean("trackerPreference", true));
                 trackerSwitch.setOnCheckedChangeListener(this);
 
-                trackerApplyButton = (Button) trackerRelativeLayout.findViewById(R.id.applyButtonTracker);
-                trackerEditText = (EditText) trackerRelativeLayout.findViewById(R.id.editTextTracker);
-                trackerCheckbox = (CheckBox) trackerRelativeLayout.findViewById(R.id.trackerCheckbox);
+                trackerApplyButton = (Button) trackerLayout.findViewById(R.id.applyButtonTracker);
+                trackerEditText = (EditText) trackerLayout.findViewById(R.id.editTextTracker);
+                trackerCheckbox = (CheckBox) trackerLayout.findViewById(R.id.trackerCheckbox);
                 trackerCheckbox.setChecked(preferences.getBoolean("trackerCheckboxPrefs", false));
                 trackerCheckbox.setOnCheckedChangeListener(this);
                 setOnTextChangeListenerForInputField(trackerEditText, trackerApplyButton);
                 setOnClickListenerForEditText(trackerEditText);
                 trackerApplyButton.setOnClickListener(this);
-                initiateDialog("Tracker", trackerRelativeLayout);
+
+                initiateDialog("Tracker", trackerLayout);
                 break;
-            case 1:
+            case Settings.SIREN:
                 RelativeLayout sirenRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_two, null);
                 final Switch sirenSwitch = (Switch) sirenRelativeLayout.findViewById(R.id.switchSiren);
-                boolean sirenPref = preferences.getBoolean("sirenPreference", false);
-                sirenSwitch.setChecked(sirenPref);
+                sirenSwitch.setChecked(preferences.getBoolean("sirenPreference", false));
                 sirenSwitch.setOnCheckedChangeListener(this);
 
                 sirenApplyButton = (Button) sirenRelativeLayout.findViewById(R.id.applyButtonSiren);
@@ -163,13 +182,13 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 setOnTextChangeListenerForInputField(sirenEditText, sirenApplyButton);
                 setOnClickListenerForEditText(sirenEditText);
                 sirenApplyButton.setOnClickListener(this);
+
                 initiateDialog("Siren", sirenRelativeLayout);
                 break;
-            case 2:
+            case Settings.SPEED:
                 RelativeLayout speedRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_three, null);
                 final Switch speedSwitch = (Switch) speedRelativeLayout.findViewById(R.id.switchSpeed);
-                boolean speedPref = preferences.getBoolean("speedPreference", true);
-                speedSwitch.setChecked(speedPref);
+                speedSwitch.setChecked(preferences.getBoolean("speedPreference", true));
                 speedSwitch.setOnCheckedChangeListener(this);
 
                 speedApplyButton = (Button) speedRelativeLayout.findViewById(R.id.applyButtonSpeed);
@@ -177,18 +196,17 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 setOnTextChangeListenerForInputField(speedEditText, speedApplyButton);
                 setOnClickListenerForEditText(speedEditText);
                 speedApplyButton.setOnClickListener(this);
+
                 initiateDialog("Speed", speedRelativeLayout);
                 break;
-            case 3:
-                blacklistRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_four, null);
-                radioGroup = (RadioGroup) blacklistRelativeLayout.findViewById(R.id.radioGroup);
+            case Settings.WHITELIST:
+                RelativeLayout whitelistRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_four, null);
+                radioGroup = (RadioGroup) whitelistRelativeLayout.findViewById(R.id.radioGroup);
 
                 radioInt = preferences.getInt("radioPrefs", 0);
 
-                initiateDialog("Whitelist", blacklistRelativeLayout);
-
                 ma = new ContactsAdapter(getApplicationContext());
-                lv = (ListView) blacklistRelativeLayout.findViewById(R.id.lv);
+                lv = (ListView) whitelistRelativeLayout.findViewById(R.id.lv);
 
                 if (radioInt == 0) {
                     radioGroup.check(R.id.radioButtonOne);
@@ -211,7 +229,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                             case R.id.radioButtonTwo:
                                 lv.setVisibility(View.GONE);
                                 preferences.edit().putInt("radioPrefs", 1).apply();
-                                preferences.edit().putString("whitelistContacts", ContactsAdapter.phoneNumber).apply();
                             break;
                             case R.id.radioButtonThree:
                                 lv.setVisibility(View.VISIBLE);
@@ -226,6 +243,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 lv.setItemsCanFocus(false);
                 lv.setTextFilterEnabled(true);
 
+                initiateDialog("Whitelist", whitelistRelativeLayout);
                 break;
         }
         positionGlobal = dummyPosition;
@@ -322,8 +340,44 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         dialog.show();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        showGooglePlayServicesError();
+
+    }
+
+
+    public void showGooglePlayServicesError() {
+
+        if (googlePlayServicesAvailable != ConnectionResult.SUCCESS) {
+            topInfoMainLayout.setVisibility(View.GONE);
+            trackerSMSCode.setVisibility(View.GONE);
+            sirenSMSCode.setVisibility(View.GONE);
+            speedSMSCode.setVisibility(View.GONE);
+
+
+            warningGooglePlayservices.setVisibility(View.VISIBLE);
+        } else {
+            warningGooglePlayservices.setVisibility(View.GONE);
+
+            topInfoMainLayout.setVisibility(View.VISIBLE);
+            trackerSMSCode.setVisibility(View.VISIBLE);
+            sirenSMSCode.setVisibility(View.VISIBLE);
+            speedSMSCode.setVisibility(View.VISIBLE);
+        }
+
+        warningGooglePlayservices.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent();
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.addCategory(Intent.CATEGORY_BROWSABLE);
+                intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=com.google.android.gms&hl=en"));
+                startActivity(intent);
+            }
+        });
+    }
 }
-
-
-
-
