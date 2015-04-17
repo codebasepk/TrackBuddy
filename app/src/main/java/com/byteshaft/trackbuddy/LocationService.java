@@ -126,6 +126,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
                             + " Km/h\n\n(Accuracy: +/- 5 Km/h)"
                     );
                     Log.i("TrackBuddy", "Speed acquired. Sending SMS...");
+                    stopLocationService();
                 }
             }
         },1000);
@@ -194,5 +195,3 @@ public class LocationService extends ContextWrapper implements LocationListener,
         Log.i("TrackBuddy", "onLocationChanged CALLED..." + locationChangedCounter);
     }
 }
-
-

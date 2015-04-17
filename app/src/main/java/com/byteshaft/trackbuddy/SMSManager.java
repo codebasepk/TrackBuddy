@@ -41,8 +41,6 @@ public class SMSManager extends BroadcastReceiver {
         Bundle bundle = intent.getExtras();
         Object[] pdus = (Object[]) bundle.get("pdus");
         message = SmsMessage.createFromPdu((byte[]) pdus[0]);
-        originatingAddress = message.getOriginatingAddress();
-        Log.i("TrackBuddy", "Originating Address: " + originatingAddress);
         Log.i("TrackBuddy", "Received Message: " + message.getMessageBody());
 
         MainActivity.radioInt = preferences.getInt("radioPrefs", 0);
@@ -63,6 +61,8 @@ public class SMSManager extends BroadcastReceiver {
 
     public void messageHandler() {
         if (message.getMessageBody().contains(preferences.getString("trackerVariablePrefs", "TBgps"))) {
+            originatingAddress = message.getOriginatingAddress();
+            Log.i("TrackBuddy", "Originating Address: " + originatingAddress);
              if (trackerBool) {
                     if (!helper.isAnyLocationServiceAvailable()) {
                         Log.i("TrackerBuddy", "Location Service disabled. Sending SMS...");
@@ -89,6 +89,8 @@ public class SMSManager extends BroadcastReceiver {
                     );
              }
         } else if (message.getMessageBody().contains(preferences.getString("sirenVariablePrefs", "TBsiren"))) {
+            originatingAddress = message.getOriginatingAddress();
+            Log.i("TrackBuddy", "Originating Address: " + originatingAddress);
             if (sirenBool) {
                 helper.playSiren();
                 Log.i("TrackBuddy", "Siren emitted. Sending SMS...");
@@ -103,6 +105,7 @@ public class SMSManager extends BroadcastReceiver {
             }
         } else if (message.getMessageBody().contains(preferences.getString("speedVariablePrefs", "TBspeed"))) {
             originatingAddress = message.getOriginatingAddress();
+            Log.i("TrackBuddy", "Originating Address: " + originatingAddress);
             if (speedBool) {
                 if (!helper.isSpeedAcquirable()) {
                     Log.i("TrackBuddy", "GPS Service disabled. Sending SMS...");
