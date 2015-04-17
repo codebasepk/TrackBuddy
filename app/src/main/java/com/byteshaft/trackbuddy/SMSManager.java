@@ -5,15 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.telephony.PhoneNumberUtils;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 
-public class SMSManager extends BroadcastReceiver implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class SMSManager extends BroadcastReceiver {
 
     SmsMessage message = null;
     Context mContext = null;
@@ -23,11 +22,14 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
     Helper helper;
     boolean trackerBool, sirenBool, speedBool;
     static boolean trackerCheckbox;
+    int googlePlayServicesAvailable;
 
     @Override
     public void onReceive(Context context, Intent intent) {
         mContext = context;
         helper = new Helper(context);
+        googlePlayServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable
+                (mContext.getApplicationContext());
 
         preferences = helper.getPreferenceManager();
         trackerBool = preferences.getBoolean("trackerPreference", true);
@@ -40,8 +42,8 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
         Object[] pdus = (Object[]) bundle.get("pdus");
         message = SmsMessage.createFromPdu((byte[]) pdus[0]);
         originatingAddress = message.getOriginatingAddress();
-        Log.i("Originating Address: ", originatingAddress);
-        Log.i("Received Message: ", message.getMessageBody());
+        Log.i("TrackBuddy", "Originating Address: " + originatingAddress);
+        Log.i("TrackBuddy", "Received Message: " + message.getMessageBody());
 
         MainActivity.radioInt = preferences.getInt("radioPrefs", 0);
 
@@ -61,49 +63,71 @@ public class SMSManager extends BroadcastReceiver implements GoogleApiClient.Con
 
     public void messageHandler() {
         if (message.getMessageBody().contains(preferences.getString("trackerVariablePrefs", "TBgps"))) {
-            if (trackerBool) {
-                gps = new LocationService(mContext);
-                if (!helper.isAnyLocationServiceAvailable()) {
-                    Log.i("Tracker", "Location Service disabled. Sending SMS...");
-                    helper.sendSms(originatingAddress, "TrackBuddy:\n\nLocation Service of the target device is disabled from the Android System Settings.");
-                } else {
-                    gps.acquireLocation();
-                }
-            } else {
-                Log.i("TrackBuddy_Tracker", "TrackerSwitched OFF. Sending SMS...");
-                helper.sendSms(originatingAddress, "TrackBuddy:\n\nTracking Service of the target device is switched off from the TrackBuddy application.");
-            }
+             if (trackerBool) {
+                    if (!helper.isAnyLocationServiceAvailable()) {
+                        Log.i("TrackerBuddy", "Location Service disabled. Sending SMS...");
+                        helper.sendSms(originatingAddress, "TrackBuddy" +
+                                "\n\nLocation Service of the target device is disabled from the Android System Settings."
+                        );
+                    } else {
+                        if (googlePlayServicesAvailable == ConnectionResult.SUCCESS) {
+                            gps = new LocationService(mContext);
+                            gps.acquireLocation();
+                            Log.i("TrackBuddy", "GoogleApiClient successfully connected");
+                        } else {
+                            helper.sendSms(originatingAddress, "TrackBuddy" +
+                                    "\n\nUnable to connect GoogleApiClient." +
+                                    "\nLatest GooglePlayServices are not installed on the target device."
+                            );
+                            Log.i("TrackBuddy", "Unable to connect GoogleApiClient.");
+                        }
+                    }
+             } else {
+                    Log.i("TrackBuddy", "TrackerSwitched OFF. Sending SMS...");
+                    helper.sendSms(originatingAddress, "TrackBuddy" +
+                            "\n\nTracking Service of the target device is switched off from the TrackBuddy application."
+                    );
+             }
         } else if (message.getMessageBody().contains(preferences.getString("sirenVariablePrefs", "TBsiren"))) {
-            originatingAddress = message.getOriginatingAddress();
             if (sirenBool) {
                 helper.playSiren();
-                Log.i("Siren", "Siren produced. Sending SMS...");
-                helper.sendSms(originatingAddress, "TrackBuddy:\n\nSiren Message successfully received.");
+                Log.i("TrackBuddy", "Siren emitted. Sending SMS...");
+                helper.sendSms(originatingAddress, "TrackBuddy" +
+                        "\n\nSiren Message successfully received."
+                );
             } else {
-                Log.i("TrackBuddy_Siren", "Siren Switched OFF. Sending SMS...");
-                helper.sendSms(originatingAddress, "TrackBuddy:\n\nSiren Service of the target device is switched off from the TrackBuddy application.");
+                Log.i("TrackBuddy", "Siren Switched OFF. Sending SMS...");
+                helper.sendSms(originatingAddress, "TrackBuddy" +
+                        "\n\nSiren Service of the target device is switched off from the TrackBuddy application."
+                );
             }
         } else if (message.getMessageBody().contains(preferences.getString("speedVariablePrefs", "TBspeed"))) {
             originatingAddress = message.getOriginatingAddress();
             if (speedBool) {
                 if (!helper.isSpeedAcquirable()) {
-                    Log.i("Speed", "GPS Service disabled. Sending SMS...");
-                    helper.sendSms(originatingAddress, "TrackBuddy:\n\nGPS Service of the target device is disabled from the Android System Settings.");
+                    Log.i("TrackBuddy", "GPS Service disabled. Sending SMS...");
+                    helper.sendSms(originatingAddress, "TrackBuddy" +
+                            "\n\nGPS Service of the target device is disabled from the Android System Settings."
+                    );
                 } else {
-                    gps = new LocationService(mContext);
-                    gps.acquireSpeed();
+                    if (googlePlayServicesAvailable == ConnectionResult.SUCCESS) {
+                        gps = new LocationService(mContext);
+                        gps.acquireSpeed();
+                        Log.i("TrackBuddy", "GoogleApiClient successfully connected");
+                    } else {
+                    helper.sendSms(originatingAddress, "TrackBuddy" +
+                            "\n\nUnable to connect GoogleApiClient." +
+                            "\nLatest GooglePlayServices are not installed on the target device."
+                    );
+                    Log.i("TrackBuddy", "Unable to connect GoogleApiClient.");
+                    }
                 }
             } else {
-                Log.i("Speed", "Speed Switched OFF. Sending SMS...");
-                helper.sendSms(originatingAddress, "TrackBuddy:\n\nSpeed Service of the target device is switched off from the TrackBuddy application.");
+                Log.i("TrackBuddy", "Speed Switched OFF. Sending SMS...");
+                helper.sendSms(originatingAddress, "TrackBuddy" +
+                        "\n\nSpeed Service of the target device is switched off from the TrackBuddy application."
+                );
             }
         }
     }
-
-    @Override
-    public void onConnected(Bundle bundle) {}
-    @Override
-    public void onConnectionSuspended(int i) {}
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {}
 }

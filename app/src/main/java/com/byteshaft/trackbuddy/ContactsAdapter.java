@@ -1,6 +1,5 @@
 package com.byteshaft.trackbuddy;
 
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -15,17 +14,17 @@ import android.widget.TextView;
 
 import java.util.List;
 
+
 public class ContactsAdapter extends BaseAdapter implements CompoundButton.OnCheckedChangeListener {
 
     static SparseBooleanArray mCheckStates;
-    static String phoneNumber;
     LayoutInflater mInflater;
     TextView tv1, tv;
     CheckBox cb;
     SharedPreferences preferences;
 
-    public List<String> name1;
-    public List<String> phno1;
+    private List<String> name1;
+    private List<String> phno1;
 
     ContactsAdapter(Context context) {
         Helper helper = new Helper(context.getApplicationContext());
@@ -47,6 +46,7 @@ public class ContactsAdapter extends BaseAdapter implements CompoundButton.OnChe
             i++;
         }
     }
+
     @Override
     public int getCount() {
         // TODO Auto-generated method stub
@@ -91,7 +91,6 @@ public class ContactsAdapter extends BaseAdapter implements CompoundButton.OnChe
             if (mCheckStates.get(i)) {
                 checkedContacts.append(phno1.get(i));
                 checkedContacts.append(",");
-                checkedContacts.append(" ");
             }
         }
         preferences.edit().putString("checkedContactsPrefs", checkedContacts.toString()).apply();

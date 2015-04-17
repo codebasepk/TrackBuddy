@@ -11,7 +11,7 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/info1"
+        android:id="@+id/topInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_alignTop="@+id/info1"
+        android:layout_alignTop="@+id/topInfo"
         android:layout_marginTop="16dp"
         android:typeface="monospace"
         android:textSize="18dp"
@@ -116,8 +116,52 @@
     </android.support.v4.widget.DrawerLayout>
 </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/playservices_layout"
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:layout_margin="14dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/firstrun_bg"
+        android:visibility="gone">
 
-<RelativeLayout
+        <ImageView
+            android:id="@+id/button_playservices"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="2dp"
+            android:src="@drawable/playservices_icon"/>
+
+        <TextView
+            android:id="@+id/textViewPlayServices"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/button_playservices"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="26dp"
+            android:text="GooglePlayServices are not Installed."
+            android:textSize="14dp"
+            android:textColor="#FF0000"/>
+
+        <TextView
+            android:id="@+id/installPlayServices"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/button_playservices"
+            android:layout_alignTop="@+id/textViewPlayServices"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="20dp"
+            android:text="CLICK HERE TO INSTALL"
+            android:typeface="monospace"
+            android:textSize="13dp"
+            android:textColor="#0099CC"/>
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:layout_margin="5dp"
