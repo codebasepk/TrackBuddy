@@ -143,7 +143,6 @@ public class LocationService extends ContextWrapper implements LocationListener,
     }
 
     private StringBuffer addressToText(Address address) throws Exception {
-        if (address == null) throw new Exception("No address provided");
         final StringBuffer addressText = new StringBuffer();
         for (int i = 0, max = address.getMaxAddressLineIndex(); i < max; ++i) {
             addressText.append(address.getAddressLine(i));
@@ -151,8 +150,6 @@ public class LocationService extends ContextWrapper implements LocationListener,
                 addressText.append(", ");
             }
         }
-        addressText.append(", ");
-        addressText.append(address.getCountryName());
         addressText.append(".");
         return addressText;
     }
@@ -172,6 +169,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
     public void stopLocationService() {
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
+        mGoogleApiClient.disconnect();
     }
 
     @Override
