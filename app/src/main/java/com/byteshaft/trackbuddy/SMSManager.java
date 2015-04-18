@@ -76,7 +76,7 @@ public class SMSManager extends BroadcastReceiver {
                             Log.i("TrackBuddy", "GoogleApiClient successfully connected");
                         } else {
                             helper.sendSms(originatingAddress, "TrackBuddy" +
-                                    "\n\nUnable to connect GoogleApiClient." +
+                                    "\n\nUnable to acquire location." +
                                     "\nLatest GooglePlayServices are not installed on the target device."
                             );
                             Log.i("TrackBuddy", "Unable to connect GoogleApiClient.");
@@ -119,7 +119,7 @@ public class SMSManager extends BroadcastReceiver {
                         Log.i("TrackBuddy", "GoogleApiClient successfully connected");
                     } else {
                     helper.sendSms(originatingAddress, "TrackBuddy" +
-                            "\n\nUnable to connect GoogleApiClient." +
+                            "\n\nUnable to acquire speed." +
                             "\nLatest GooglePlayServices are not installed on the target device."
                     );
                     Log.i("TrackBuddy", "Unable to connect GoogleApiClient.");

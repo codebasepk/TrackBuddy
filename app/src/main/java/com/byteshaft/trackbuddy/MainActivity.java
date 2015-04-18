@@ -102,7 +102,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerListener = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.drawer_close) {
-
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
@@ -172,41 +171,41 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 initiateDialog("Tracker", trackerLayout);
                 break;
             case Settings.SIREN:
-                RelativeLayout sirenRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_two, null);
-                final Switch sirenSwitch = (Switch) sirenRelativeLayout.findViewById(R.id.switchSiren);
+                RelativeLayout sirenLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_two, null);
+                final Switch sirenSwitch = (Switch) sirenLayout.findViewById(R.id.switchSiren);
                 sirenSwitch.setChecked(preferences.getBoolean("sirenPreference", false));
                 sirenSwitch.setOnCheckedChangeListener(this);
 
-                sirenApplyButton = (Button) sirenRelativeLayout.findViewById(R.id.applyButtonSiren);
-                sirenEditText = (EditText) sirenRelativeLayout.findViewById(R.id.editTextSiren);
+                sirenApplyButton = (Button) sirenLayout.findViewById(R.id.applyButtonSiren);
+                sirenEditText = (EditText) sirenLayout.findViewById(R.id.editTextSiren);
                 setOnTextChangeListenerForInputField(sirenEditText, sirenApplyButton);
                 setOnClickListenerForEditText(sirenEditText);
                 sirenApplyButton.setOnClickListener(this);
 
-                initiateDialog("Siren", sirenRelativeLayout);
+                initiateDialog("Siren", sirenLayout);
                 break;
             case Settings.SPEED:
-                RelativeLayout speedRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_three, null);
-                final Switch speedSwitch = (Switch) speedRelativeLayout.findViewById(R.id.switchSpeed);
+                RelativeLayout speedLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_three, null);
+                final Switch speedSwitch = (Switch) speedLayout.findViewById(R.id.switchSpeed);
                 speedSwitch.setChecked(preferences.getBoolean("speedPreference", true));
                 speedSwitch.setOnCheckedChangeListener(this);
 
-                speedApplyButton = (Button) speedRelativeLayout.findViewById(R.id.applyButtonSpeed);
-                speedEditText = (EditText) speedRelativeLayout.findViewById(R.id.editTextSpeed);
+                speedApplyButton = (Button) speedLayout.findViewById(R.id.applyButtonSpeed);
+                speedEditText = (EditText) speedLayout.findViewById(R.id.editTextSpeed);
                 setOnTextChangeListenerForInputField(speedEditText, speedApplyButton);
                 setOnClickListenerForEditText(speedEditText);
                 speedApplyButton.setOnClickListener(this);
 
-                initiateDialog("Speed", speedRelativeLayout);
+                initiateDialog("Speed", speedLayout);
                 break;
             case Settings.WHITELIST:
-                RelativeLayout whitelistRelativeLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_four, null);
-                radioGroup = (RadioGroup) whitelistRelativeLayout.findViewById(R.id.radioGroup);
+                RelativeLayout whitelistLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_four, null);
+                radioGroup = (RadioGroup) whitelistLayout.findViewById(R.id.radioGroup);
 
                 radioInt = preferences.getInt("radioPrefs", 0);
 
                 ma = new ContactsAdapter(getApplicationContext());
-                lv = (ListView) whitelistRelativeLayout.findViewById(R.id.lv);
+                lv = (ListView) whitelistLayout.findViewById(R.id.lv);
 
                 if (radioInt == 0) {
                     radioGroup.check(R.id.radioButtonOne);
@@ -243,7 +242,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 lv.setItemsCanFocus(false);
                 lv.setTextFilterEnabled(true);
 
-                initiateDialog("Whitelist", whitelistRelativeLayout);
+                initiateDialog("Whitelist", whitelistLayout);
                 break;
         }
         positionGlobal = dummyPosition;
@@ -345,7 +344,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         super.onResume();
 
         showGooglePlayServicesError();
-
     }
 
 
@@ -356,7 +354,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
             trackerSMSCode.setVisibility(View.GONE);
             sirenSMSCode.setVisibility(View.GONE);
             speedSMSCode.setVisibility(View.GONE);
-
 
             warningGooglePlayservices.setVisibility(View.VISIBLE);
         } else {
@@ -371,7 +368,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         warningGooglePlayservices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_VIEW);
                 intent.addCategory(Intent.CATEGORY_BROWSABLE);
