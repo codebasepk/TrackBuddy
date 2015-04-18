@@ -127,7 +127,7 @@ public class Helper extends ContextWrapper {
 
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    if (activity.gpsSettingsCheckbox.isChecked()) {
+                    if (activity.gpsSettingsCheckbox.isChecked() && !isAnyLocationServiceAvailable()) {
                         startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                     }
                     activity.topLevelLayout.setVisibility(View.INVISIBLE);
