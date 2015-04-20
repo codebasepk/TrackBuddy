@@ -50,7 +50,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     int positionGlobal = -1;
     final int dummyPosition = -1;
     static int radioInt;
-    int googlePlayServicesAvailable;
 
     LayoutInflater layoutInflater;
     
@@ -68,8 +67,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         getSupportActionBar().setTitle("Home");
         Helper mHelpers = new Helper(this);
 
-        googlePlayServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable
-                (getApplicationContext());
+
 
         preferences = mHelpers.getPreferenceManager();
 
@@ -342,12 +340,13 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     @Override
     protected void onResume() {
         super.onResume();
-
         showGooglePlayServicesError();
     }
 
-
     public void showGooglePlayServicesError() {
+
+        int googlePlayServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable
+                (getApplicationContext());
 
         if (googlePlayServicesAvailable != ConnectionResult.SUCCESS) {
             topInfoMainLayout.setVisibility(View.GONE);

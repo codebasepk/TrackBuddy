@@ -85,7 +85,7 @@ public class SMSManager extends BroadcastReceiver {
              } else {
                     Log.i("TrackBuddy", "TrackerSwitched OFF. Sending SMS...");
                     helper.sendSms(originatingAddress, "TrackBuddy" +
-                            "\n\nTracking Service of the target device is switched off from the TrackBuddy application."
+                            "\n\nTracking feature of the target device is switched off from the TrackBuddy application."
                     );
              }
         } else if (message.getMessageBody().contains(preferences.getString("sirenVariablePrefs", "TBsiren"))) {
@@ -100,7 +100,7 @@ public class SMSManager extends BroadcastReceiver {
             } else {
                 Log.i("TrackBuddy", "Siren Switched OFF. Sending SMS...");
                 helper.sendSms(originatingAddress, "TrackBuddy" +
-                        "\n\nSiren Service of the target device is switched off from the TrackBuddy application."
+                        "\n\nSiren feature of the target device is switched off from the TrackBuddy application."
                 );
             }
         } else if (message.getMessageBody().contains(preferences.getString("speedVariablePrefs", "TBspeed"))) {
@@ -116,7 +116,6 @@ public class SMSManager extends BroadcastReceiver {
                     if (googlePlayServicesAvailable == ConnectionResult.SUCCESS) {
                         gps = new LocationService(mContext);
                         gps.acquireSpeed();
-                        Log.i("TrackBuddy", "GoogleApiClient successfully connected");
                     } else {
                     helper.sendSms(originatingAddress, "TrackBuddy" +
                             "\n\nUnable to acquire speed." +
@@ -128,7 +127,7 @@ public class SMSManager extends BroadcastReceiver {
             } else {
                 Log.i("TrackBuddy", "Speed Switched OFF. Sending SMS...");
                 helper.sendSms(originatingAddress, "TrackBuddy" +
-                        "\n\nSpeed Service of the target device is switched off from the TrackBuddy application."
+                        "\n\nSpeed feature of the target device is switched off from the TrackBuddy application."
                 );
             }
         }
