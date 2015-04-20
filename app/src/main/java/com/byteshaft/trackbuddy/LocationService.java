@@ -150,6 +150,8 @@ public class LocationService extends ContextWrapper implements LocationListener,
                 addressText.append(", ");
             }
         }
+        addressText.append(", ");
+        addressText.append(address.getCountryName());
         addressText.append(".");
         return addressText;
     }
