@@ -52,7 +52,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
                         String latLast = String.valueOf(mLocation.getLatitude());
                         String lonLast = String.valueOf(mLocation.getLongitude());
                         mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nCurrent location cannot be acquired at the moment."
-                                + "\n\nLast Known Location of the device is:\nhttps://maps.google.com/maps?q="
+                                + "\n\nLastKnownLocation is:\nhttps://maps.google.com/maps?q="
                                 + latLast
                                 + ","
                                 + lonLast
@@ -121,7 +121,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
                     Log.i("TrackBuddy", "Speed Thread Running..." + speedRecursionCounter);
                 } else {
                     int roundedValueSpeed = (int) speed;
-                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nTarget device is travelling at the speed of "
+                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nI am travelling at the speed of "
                             + roundedValueSpeed * 3600 / 1000
                             + " Km/h\n\n(Accuracy: +/- 5 Km/h)"
                     );
