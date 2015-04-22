@@ -172,7 +172,6 @@ public class LocationService extends ContextWrapper implements LocationListener,
     public void stopLocationService() {
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient, this);
-        mGoogleApiClient.disconnect();
     }
 
     @Override
