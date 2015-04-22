@@ -121,7 +121,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
                     Log.i("TrackBuddy", "Speed Thread Running..." + speedRecursionCounter);
                 } else {
                     int roundedValueSpeed = (int) speed;
-                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nTarget device is travelling at the speed of "
+                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nI am travelling at the speed of "
                             + roundedValueSpeed * 3600 / 1000
                             + " Km/h\n\n(Accuracy: +/- 5 Km/h)"
                     );
