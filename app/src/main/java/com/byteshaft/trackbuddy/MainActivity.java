@@ -269,6 +269,11 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
             }
             @Override
             public void afterTextChanged(Editable s) {
+                String result = s.toString().replaceAll(" ", "");
+                if(!s.toString().equals(result)) {
+                    editText.setText(result);
+                    editText.setSelection(result.length());
+                }
             }
         });
     }
