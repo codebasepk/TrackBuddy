@@ -101,9 +101,9 @@ public class Helper extends ContextWrapper {
             ImageView myView = (ImageView) activity.findViewById(R.id.arrowImage);
 
             ObjectAnimator fadeOut = ObjectAnimator.ofFloat(myView, "alpha",  1f, .3f);
-            fadeOut.setDuration(500);
+            fadeOut.setDuration(1200);
             ObjectAnimator fadeIn = ObjectAnimator.ofFloat(myView, "alpha", .3f, 1f);
-            fadeIn.setDuration(500);
+            fadeIn.setDuration(1200);
 
             final AnimatorSet mAnimationSet = new AnimatorSet();
 
@@ -127,7 +127,7 @@ public class Helper extends ContextWrapper {
 
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
-                    if (activity.gpsSettingsCheckbox.isChecked()) {
+                    if (activity.gpsSettingsCheckbox.isChecked() && !isAnyLocationServiceAvailable()) {
                         startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                     }
                     activity.topLevelLayout.setVisibility(View.INVISIBLE);
@@ -195,4 +195,5 @@ public class Helper extends ContextWrapper {
     private String[] getCheckedContacts(String checkedContacts) {
         return checkedContacts.split(",");
     }
+
 }

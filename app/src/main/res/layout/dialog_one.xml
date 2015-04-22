@@ -31,7 +31,7 @@
         android:layout_width="230dp"
         android:layout_height="40dp"
         android:longClickable="false"
-        android:inputType="textNoSuggestions"
+        android:inputType="textVisiblePassword"
         android:maxLength="10"
         android:layout_below="@+id/switchTracker"
         android:layout_centerHorizontal="true"
@@ -67,7 +67,8 @@
         android:layout_centerHorizontal="true"
         android:textColor="#669900"
         android:layout_marginLeft="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="1dp"
+        android:paddingBottom="2dp"
         android:layout_marginRight="5dp"
         android:textSize="10dp"
         android:text="Info: Tracking accuracy varies with devices. For optimum results, switch your location settings to High-Accuracy Mode."/>
