@@ -52,7 +52,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
                         String latLast = String.valueOf(mLocation.getLatitude());
                         String lonLast = String.valueOf(mLocation.getLongitude());
                         mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nCurrent location cannot be acquired at the moment."
-                                + "\n\nLast Known Location of the device is:\nhttps://maps.google.com/maps?q="
+                                + "\n\nLastKnownLocation is:\nhttps://maps.google.com/maps?q="
                                 + latLast
                                 + ","
                                 + lonLast
