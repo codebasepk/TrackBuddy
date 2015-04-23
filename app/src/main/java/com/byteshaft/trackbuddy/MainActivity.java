@@ -269,6 +269,11 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
             }
             @Override
             public void afterTextChanged(Editable s) {
+                String result = s.toString().replaceAll(" ", "");
+                    if(!s.toString().equals(result)) {
+                        editText.setText(result);
+                        editText.setSelection(result.length());
+                    }
             }
         });
     }
@@ -309,7 +314,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         switch (v.getId()) {
             case R.id.applyButtonTracker:
                 trackerVariable = trackerEditText.getText().toString();
-                trackerVariable = trackerVariable.replaceAll("\\W", "");
                 trackerEditText.getText().clear();
                 preferences.edit().putString("trackerVariablePrefs", trackerVariable).apply();
                 trackerSMSCode.setText("Tracker Code: " + trackerVariable);
@@ -317,7 +321,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
             break;
             case R.id.applyButtonSiren:
                 sirenVariable = sirenEditText.getText().toString();
-                sirenVariable = sirenVariable.replaceAll("\\W", "");
                 sirenEditText.getText().clear();
                 preferences.edit().putString("sirenVariablePrefs", sirenVariable).apply();
                 sirenSMSCode.setText("Siren Code: " + sirenVariable);
@@ -325,7 +328,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
             break;
             case R.id.applyButtonSpeed:
                 speedVariable = speedEditText.getText().toString();
-                speedVariable = speedVariable.replaceAll("\\W", "");
                 speedEditText.getText().clear();
                 preferences.edit().putString("speedVariablePrefs", speedVariable).apply();
                 speedSMSCode.setText("Speed Code: " + speedVariable);
