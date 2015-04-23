@@ -31,7 +31,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
     int locationRecursionCounter = 0;
     int locationChangedCounter = 0;
 
-    static double speed;
+    static double speed = 0.0;
 
     LocationRequest mLocationRequest;
     Location mLocation;
@@ -121,11 +121,12 @@ public class LocationService extends ContextWrapper implements LocationListener,
                     Log.i("TrackBuddy", "Speed Thread Running..." + speedRecursionCounter);
                 } else {
                     int roundedValueSpeed = (int) speed;
-                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nI am travelling at the speed of "
+                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nI am travelling at "
                             + roundedValueSpeed * 3600 / 1000
                             + " Km/h\n\n(Accuracy: +/- 5 Km/h)"
                     );
                     Log.i("TrackBuddy", "Speed acquired. Sending SMS...");
+                    speed = 0.0;
                     stopLocationService();
                 }
             }
