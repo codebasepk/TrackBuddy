@@ -111,11 +111,11 @@ public class LocationService extends ContextWrapper implements LocationListener,
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (speed == 0.0 && speedRecursionCounter > 30) {
+                if (speed < 1.0 && speedRecursionCounter > 30) {
                     mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nTarget device appears to be still.");
                     Log.i("TrackBuddy", "Target device appears to be still. Sending SMS...");
                     stopLocationService();
-                } else if (speed == 0.0) {
+                } else if (speed < 1.0) {
                     acquireSpeed();
                     speedRecursionCounter++;
                     Log.i("TrackBuddy", "Speed Thread Running..." + speedRecursionCounter);
