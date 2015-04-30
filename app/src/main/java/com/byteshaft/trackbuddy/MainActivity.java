@@ -35,23 +35,22 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     private ListView listView;
     private ActionBarDrawerToggle drawerListener;
 
-    Button trackerApplyButton, sirenApplyButton, speedApplyButton, okButton;
-    RadioGroup radioGroup;
-    EditText trackerEditText, sirenEditText, speedEditText;
-    TextView trackerSMSCode, sirenSMSCode, speedSMSCode,topInfoMainLayout ;
-    SharedPreferences preferences;
-    String trackerVariable, sirenVariable, speedVariable;
-    Dialog dialog;
-    CheckBox gpsSettingsCheckbox, trackerCheckbox;
+    Button okButton;
+    private EditText trackerEditText, sirenEditText, speedEditText;
+    private TextView trackerSMSCode, sirenSMSCode, speedSMSCode,topInfoMainLayout ;
+    private SharedPreferences preferences;
+    private String trackerVariable, sirenVariable, speedVariable;
+    private Dialog dialog;
+    CheckBox gpsSettingsCheckbox;
     View topLevelLayout, gpsSettingsLayout;
-    RelativeLayout warningGooglePlayservices;
-    ListView lv;
-    ContactsAdapter ma;
+    private RelativeLayout warningGooglePlayservices;
+    private ListView lv;
+    private ContactsAdapter ma;
     int positionGlobal = -1;
     final int dummyPosition = -1;
     static int radioInt;
 
-    LayoutInflater layoutInflater;
+    private LayoutInflater layoutInflater;
     
     private static class Settings {
         final static int TRACKER = 0;
@@ -157,9 +156,9 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 trackerSwitch.setChecked(preferences.getBoolean("trackerPreference", true));
                 trackerSwitch.setOnCheckedChangeListener(this);
 
-                trackerApplyButton = (Button) trackerLayout.findViewById(R.id.applyButtonTracker);
+                Button trackerApplyButton = (Button) trackerLayout.findViewById(R.id.applyButtonTracker);
                 trackerEditText = (EditText) trackerLayout.findViewById(R.id.editTextTracker);
-                trackerCheckbox = (CheckBox) trackerLayout.findViewById(R.id.trackerCheckbox);
+                CheckBox trackerCheckbox = (CheckBox) trackerLayout.findViewById(R.id.trackerCheckbox);
                 trackerCheckbox.setChecked(preferences.getBoolean("trackerCheckboxPrefs", false));
                 trackerCheckbox.setOnCheckedChangeListener(this);
                 setOnTextChangeListenerForInputField(trackerEditText, trackerApplyButton);
@@ -174,7 +173,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 sirenSwitch.setChecked(preferences.getBoolean("sirenPreference", false));
                 sirenSwitch.setOnCheckedChangeListener(this);
 
-                sirenApplyButton = (Button) sirenLayout.findViewById(R.id.applyButtonSiren);
+                Button sirenApplyButton = (Button) sirenLayout.findViewById(R.id.applyButtonSiren);
                 sirenEditText = (EditText) sirenLayout.findViewById(R.id.editTextSiren);
                 setOnTextChangeListenerForInputField(sirenEditText, sirenApplyButton);
                 setOnClickListenerForEditText(sirenEditText);
@@ -188,7 +187,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 speedSwitch.setChecked(preferences.getBoolean("speedPreference", true));
                 speedSwitch.setOnCheckedChangeListener(this);
 
-                speedApplyButton = (Button) speedLayout.findViewById(R.id.applyButtonSpeed);
+                Button speedApplyButton = (Button) speedLayout.findViewById(R.id.applyButtonSpeed);
                 speedEditText = (EditText) speedLayout.findViewById(R.id.editTextSpeed);
                 setOnTextChangeListenerForInputField(speedEditText, speedApplyButton);
                 setOnClickListenerForEditText(speedEditText);
@@ -198,7 +197,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 break;
             case Settings.WHITELIST:
                 RelativeLayout whitelistLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_four, null);
-                radioGroup = (RadioGroup) whitelistLayout.findViewById(R.id.radioGroup);
+                RadioGroup radioGroup = (RadioGroup) whitelistLayout.findViewById(R.id.radioGroup);
 
                 radioInt = preferences.getInt("radioPrefs", 0);
 
@@ -222,15 +221,15 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                             case R.id.radioButtonOne:
                                 lv.setVisibility(View.GONE);
                                 preferences.edit().putInt("radioPrefs", 0).apply();
-                            break;
+                                break;
                             case R.id.radioButtonTwo:
                                 lv.setVisibility(View.GONE);
                                 preferences.edit().putInt("radioPrefs", 1).apply();
-                            break;
+                                break;
                             case R.id.radioButtonThree:
                                 lv.setVisibility(View.VISIBLE);
                                 preferences.edit().putInt("radioPrefs", 2).apply();
-                            break;
+                                break;
                         }
                     }
                 });

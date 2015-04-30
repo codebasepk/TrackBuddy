@@ -25,16 +25,16 @@ public class LocationService extends ContextWrapper implements LocationListener,
     private static final long FASTEST_INTERVAL = 0;
     private Helper mHelpers = null;
     private GoogleApiClient mGoogleApiClient;
-    String address;
+    private String address;
 
-    int speedRecursionCounter = 0;
-    int locationRecursionCounter = 0;
-    int locationChangedCounter = 0;
+    private int speedRecursionCounter = 0;
+    private int locationRecursionCounter = 0;
+    private int locationChangedCounter = 0;
 
     static double speed = 0.0;
 
-    LocationRequest mLocationRequest;
-    Location mLocation;
+    private LocationRequest mLocationRequest;
+    private Location mLocation;
 
     public LocationService(Context context) {
         super(context);

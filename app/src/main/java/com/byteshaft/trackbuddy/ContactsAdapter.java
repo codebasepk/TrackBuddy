@@ -18,10 +18,8 @@ import java.util.List;
 public class ContactsAdapter extends BaseAdapter implements CompoundButton.OnCheckedChangeListener {
 
     static SparseBooleanArray mCheckStates;
-    LayoutInflater mInflater;
-    TextView tv1, tv;
-    CheckBox cb;
-    SharedPreferences preferences;
+    private LayoutInflater mInflater;
+    private SharedPreferences preferences;
 
     private List<String> name1;
     private List<String> phno1;
@@ -68,9 +66,9 @@ public class ContactsAdapter extends BaseAdapter implements CompoundButton.OnChe
         if(convertView==null) {
             vi = mInflater.inflate(R.layout.row, null);
         }
-        tv= (TextView) vi.findViewById(R.id.textView1);
-        tv1= (TextView) vi.findViewById(R.id.textView2);
-        cb = (CheckBox) vi.findViewById(R.id.checkBox1);
+        TextView tv = (TextView) vi.findViewById(R.id.textView1);
+        TextView tv1 = (TextView) vi.findViewById(R.id.textView2);
+        CheckBox cb = (CheckBox) vi.findViewById(R.id.checkBox1);
         tv.setText(name1.get(position));
         tv1.setText(phno1.get(position));
         cb.setTag(position);

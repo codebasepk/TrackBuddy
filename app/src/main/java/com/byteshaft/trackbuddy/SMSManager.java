@@ -14,15 +14,15 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 
 public class SMSManager extends BroadcastReceiver {
 
-    SmsMessage message = null;
-    Context mContext = null;
-    LocationService gps;
+    private SmsMessage message = null;
+    private Context mContext = null;
+    private LocationService gps;
     static String originatingAddress;
-    SharedPreferences preferences;
-    Helper helper;
-    boolean trackerBool, sirenBool, speedBool;
+    private SharedPreferences preferences;
+    private Helper helper;
+    private boolean trackerBool, sirenBool, speedBool;
     static boolean trackerCheckbox;
-    int googlePlayServicesAvailable;
+    private int googlePlayServicesAvailable;
 
     @Override
     public void onReceive(Context context, Intent intent) {
