@@ -21,15 +21,15 @@ import java.util.List;
 public class LocationService extends ContextWrapper implements LocationListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private static final long INTERVAL = 0;
-    private static final long FASTEST_INTERVAL = 0;
+    private final long INTERVAL = 0;
+    private final long FASTEST_INTERVAL = 0;
     private Helper mHelpers;
     private GoogleApiClient mGoogleApiClient;
-    private String address;
+    private String mAddress;
 
-    private int speedRecursionCounter = 0;
-    private int locationRecursionCounter = 0;
-    private int locationChangedCounter = 0;
+    private int mSpeedRecursionCounter = 0;
+    private int mLocationRecursionCounter = 0;
+    private int mLocationChangedCounter = 0;
 
     static double speed = 0.0;
 
@@ -46,12 +46,12 @@ public class LocationService extends ContextWrapper implements LocationListener,
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (mLocation == null && locationRecursionCounter > 120) {
+                if (mLocation == null && mLocationRecursionCounter > 120) {
                     mLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
                     if (mLocation != null) {
                         String latLast = String.valueOf(mLocation.getLatitude());
                         String lonLast = String.valueOf(mLocation.getLongitude());
-                        mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nCurrent location cannot be acquired at the moment."
+                        mHelpers.sendSms(SMSManager.sOriginatingAddress, "TrackBuddy\n\nCurrent location cannot be acquired at the moment."
                                 + "\n\nLastKnownLocation is:\nhttps://maps.google.com/maps?q="
                                 + latLast
                                 + ","
@@ -60,7 +60,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
                         Log.i("TrackBuddy", "Location cannot be acquired. Sending lastKnownLocation SMS...");
                         stopLocationService();
                     } else {
-                        mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nDevice cannot be located at the moment."
+                        mHelpers.sendSms(SMSManager.sOriginatingAddress, "TrackBuddy\n\nDevice cannot be located at the moment."
                                 + "\n\nMake sure the Location Service of the target device is on High-Accuracy Mode."
                         );
                         Log.i("TrackBuddy", "Device cannot be Located. Sending SMS...");
@@ -68,15 +68,15 @@ public class LocationService extends ContextWrapper implements LocationListener,
                     }
                 } else if (mLocation == null) {
                     acquireLocation();
-                    locationRecursionCounter++;
-                    Log.i("TrackBuddy", "Tracker Thread Running... " + locationRecursionCounter);
+                    mLocationRecursionCounter++;
+                    Log.i("TrackBuddy", "Tracker Thread Running... " + mLocationRecursionCounter);
                 } else {
                     double accuracy;
                     String lat = String.valueOf(mLocation.getLatitude());
                     String lon = String.valueOf(mLocation.getLongitude());
                     accuracy = mLocation.getAccuracy();
                     int roundedAccuracy = (int) accuracy;
-                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nMy current location is:"
+                    mHelpers.sendSms(SMSManager.sOriginatingAddress, "TrackBuddy\n\nMy current location is:"
                             + "\nhttps://maps.google.com/maps?q="
                             + lat
                             + ","
@@ -87,16 +87,16 @@ public class LocationService extends ContextWrapper implements LocationListener,
                     );
                     Log.i("TrackBuddy", "Current location acquired. Sending SMS...");
 
-                    if (SMSManager.trackerCheckbox) {
+                    if (SMSManager.sTrackerCheckbox) {
                         Geocoder geocoder = new Geocoder(getApplicationContext());
                         try {
                             List<Address> result = geocoder.getFromLocation(mLocation.getLatitude(), mLocation.getLongitude(), 1);
-                            address = addressToText(result.get(0)).toString();
+                            mAddress = addressToText(result.get(0)).toString();
                         }catch (Exception e) {
-                            address = null;
+                            mAddress = null;
                         }
-                        if (address != null) {
-                            mHelpers.sendSms(SMSManager.originatingAddress, address);
+                        if (mAddress != null) {
+                            mHelpers.sendSms(SMSManager.sOriginatingAddress, mAddress);
                             Log.i("TrackBuddy", "Address acquired. Sending SMS...");
                         }
                     }
@@ -111,17 +111,17 @@ public class LocationService extends ContextWrapper implements LocationListener,
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (speed < 1.0 && speedRecursionCounter > 30) {
-                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nTarget device appears to be still.");
+                if (speed < 1.0 && mSpeedRecursionCounter > 30) {
+                    mHelpers.sendSms(SMSManager.sOriginatingAddress, "TrackBuddy\n\nTarget device appears to be still.");
                     Log.i("TrackBuddy", "Target device appears to be still. Sending SMS...");
                     stopLocationService();
                 } else if (speed < 1.0) {
                     acquireSpeed();
-                    speedRecursionCounter++;
-                    Log.i("TrackBuddy", "Speed Thread Running..." + speedRecursionCounter);
+                    mSpeedRecursionCounter++;
+                    Log.i("TrackBuddy", "Speed Thread Running..." + mSpeedRecursionCounter);
                 } else {
                     int roundedValueSpeed = (int) speed;
-                    mHelpers.sendSms(SMSManager.originatingAddress, "TrackBuddy\n\nI am travelling at "
+                    mHelpers.sendSms(SMSManager.sOriginatingAddress, "TrackBuddy\n\nI am travelling at "
                             + roundedValueSpeed * 3600 / 1000
                             + " Km/h\n\n(Accuracy: +/- 5 Km/h)"
                     );
@@ -188,11 +188,11 @@ public class LocationService extends ContextWrapper implements LocationListener,
 
     @Override
     public void onLocationChanged(Location location) {
-        locationChangedCounter++;
-        if (locationChangedCounter == 5) {
+        mLocationChangedCounter++;
+        if (mLocationChangedCounter == 5) {
             mLocation = location;
         }
         speed = location.getSpeed();
-        Log.i("TrackBuddy", "onLocationChanged CALLED..." + locationChangedCounter);
+        Log.i("TrackBuddy", "onLocationChanged CALLED..." + mLocationChangedCounter);
     }
 }

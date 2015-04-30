@@ -19,23 +19,23 @@ public class ContactsAdapter extends BaseAdapter implements CompoundButton.OnChe
 
     static SparseBooleanArray mCheckStates;
     private LayoutInflater mInflater;
-    private SharedPreferences preferences;
+    private SharedPreferences mPreferences;
 
-    private List<String> name1;
-    private List<String> phno1;
+    private List<String> mContactNames;
+    private List<String> mContactNumbers;
 
     ContactsAdapter(Context context) {
         Helper helper = new Helper(context.getApplicationContext());
-        preferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
-        name1 = helper.getAllContactNames();
-        phno1 = helper.getAllContactNumbers();
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
+        mContactNames = helper.getAllContactNames();
+        mContactNumbers = helper.getAllContactNumbers();
         if (mCheckStates == null) {
-            mCheckStates = new SparseBooleanArray(name1.size());
+            mCheckStates = new SparseBooleanArray(mContactNames.size());
         }
         mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         String[] checkedContacts = getCheckedContacts();
         int i = 0;
-        for (String contact : phno1) {
+        for (String contact : mContactNumbers) {
             for (String checkedContact: checkedContacts) {
                 if (contact.equals(checkedContact)) {
                     mCheckStates.put(i, true);
@@ -47,7 +47,7 @@ public class ContactsAdapter extends BaseAdapter implements CompoundButton.OnChe
 
     @Override
     public int getCount() {
-        return name1.size();
+        return mContactNames.size();
     }
 
     @Override
@@ -69,8 +69,8 @@ public class ContactsAdapter extends BaseAdapter implements CompoundButton.OnChe
         TextView tv = (TextView) vi.findViewById(R.id.textView1);
         TextView tv1 = (TextView) vi.findViewById(R.id.textView2);
         CheckBox cb = (CheckBox) vi.findViewById(R.id.checkBox1);
-        tv.setText(name1.get(position));
-        tv1.setText(phno1.get(position));
+        tv.setText(mContactNames.get(position));
+        tv1.setText(mContactNumbers.get(position));
         cb.setTag(position);
         cb.setChecked(mCheckStates.get(position, false));
         cb.setOnCheckedChangeListener(this);
@@ -82,17 +82,17 @@ public class ContactsAdapter extends BaseAdapter implements CompoundButton.OnChe
         mCheckStates.put((Integer) buttonView.getTag(), isChecked);
 
         StringBuilder checkedContacts = new StringBuilder();
-        for (int i = 0; i < name1.size(); i++) {
+        for (int i = 0; i < mContactNames.size(); i++) {
             if (mCheckStates.get(i)) {
-                checkedContacts.append(phno1.get(i));
+                checkedContacts.append(mContactNumbers.get(i));
                 checkedContacts.append(",");
             }
         }
-        preferences.edit().putString("checkedContactsPrefs", checkedContacts.toString()).apply();
+        mPreferences.edit().putString("checkedContactsPrefs", checkedContacts.toString()).apply();
     }
 
     private String[] getCheckedContacts() {
-        String string = preferences.getString("checkedContactsPrefs", " ");
+        String string = mPreferences.getString("checkedContactsPrefs", " ");
         return string.split(",");
     }
 

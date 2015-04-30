@@ -31,26 +31,25 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 public class MainActivity extends ActionBarActivity implements ListView.OnItemClickListener,
         Switch.OnCheckedChangeListener, Button.OnClickListener {
 
-    private DrawerLayout drawerLayout;
-    private ListView listView;
-    private ActionBarDrawerToggle drawerListener;
+    private DrawerLayout mDrawerLayout;
+    private ListView mListView;
+    private ActionBarDrawerToggle mDrawerListener;
 
-    Button okButton;
-    private EditText trackerEditText, sirenEditText, speedEditText;
-    private TextView trackerSMSCode, sirenSMSCode, speedSMSCode,topInfoMainLayout ;
-    private SharedPreferences preferences;
+    Button sButtonOk;
+    private EditText mTrackerCodeChangeEntry, mSirenCodeChangeEntry, mSpeedTrackingCodeChangeEntry;
+    private TextView mTrackerSmsCodeLabel, mSirenSmsCodeLabel, mSpeedTrackerSmsCodeLabel, mTopInfoMainLayout;
+    private SharedPreferences mPreferences;
     private String trackerVariable, sirenVariable, speedVariable;
-    private Dialog dialog;
+    private Dialog mDialog;
     CheckBox gpsSettingsCheckbox;
     View topLevelLayout, gpsSettingsLayout;
     private RelativeLayout warningGooglePlayservices;
     private ListView lv;
-    private ContactsAdapter ma;
-    int positionGlobal = -1;
-    final int dummyPosition = -1;
+    int mPositionGlobal = -1;
+    final int DUMMY_POSITION = -1;
     static int radioInt;
 
-    private LayoutInflater layoutInflater;
+    private LayoutInflater mLayoutInflater;
     
     private static class Settings {
         final static int TRACKER = 0;
@@ -68,37 +67,37 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
 
 
 
-        preferences = mHelpers.getPreferenceManager();
+        mPreferences = mHelpers.getPreferenceManager();
 
         if (mHelpers.isFirstTime(this)) {
             topLevelLayout.setVisibility(View.INVISIBLE);
         }
 
-        layoutInflater = getLayoutInflater();
+        mLayoutInflater = getLayoutInflater();
 
-        trackerVariable = preferences.getString("trackerVariablePrefs", "TBgps");
-        trackerSMSCode = (TextView) findViewById(R.id.trackerSMSCode);
-        trackerSMSCode.setText("Tracker Code: " + trackerVariable);
+        trackerVariable = mPreferences.getString("trackerVariablePrefs", "TBgps");
+        mTrackerSmsCodeLabel = (TextView) findViewById(R.id.trackerSMSCode);
+        mTrackerSmsCodeLabel.setText("Tracker Code: " + trackerVariable);
 
-        sirenVariable = preferences.getString("sirenVariablePrefs", "TBsiren");
-        sirenSMSCode = (TextView) findViewById(R.id.sirenSMSCode);
-        sirenSMSCode.setText("Siren Code: " + sirenVariable);
+        sirenVariable = mPreferences.getString("sirenVariablePrefs", "TBsiren");
+        mSirenSmsCodeLabel = (TextView) findViewById(R.id.sirenSMSCode);
+        mSirenSmsCodeLabel.setText("Siren Code: " + sirenVariable);
 
-        speedVariable = preferences.getString("speedVariablePrefs", "TBspeed");
-        speedSMSCode = (TextView) findViewById(R.id.speedSMSCode);
-        speedSMSCode.setText("Speed Code: " + speedVariable);
+        speedVariable = mPreferences.getString("speedVariablePrefs", "TBspeed");
+        mSpeedTrackerSmsCodeLabel = (TextView) findViewById(R.id.speedSMSCode);
+        mSpeedTrackerSmsCodeLabel.setText("Speed Code: " + speedVariable);
 
-        topInfoMainLayout = (TextView) findViewById(R.id.topInfo);
+        mTopInfoMainLayout = (TextView) findViewById(R.id.topInfo);
         warningGooglePlayservices = (RelativeLayout) findViewById(R.id.playservices_layout);
 
         DrawerAdapter myAdapter = new DrawerAdapter(this);
 
-        listView = (ListView) findViewById(R.id.drawer_list);
-        listView.setAdapter(myAdapter);
-        listView.setOnItemClickListener(this);
+        mListView = (ListView) findViewById(R.id.drawer_list);
+        mListView.setAdapter(myAdapter);
+        mListView.setOnItemClickListener(this);
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerListener = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.ic_drawer, R.string.drawer_close) {
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerListener = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_close) {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
@@ -107,10 +106,10 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                popDialog(positionGlobal);
+                popDialog(mPositionGlobal);
             }
         };
-        drawerLayout.setDrawerListener(drawerListener);
+        mDrawerLayout.setDrawerListener(mDrawerListener);
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -118,90 +117,90 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return drawerListener.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
+        return mDrawerListener.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        drawerListener.onConfigurationChanged(newConfig);
+        mDrawerListener.onConfigurationChanged(newConfig);
     }
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        drawerListener.syncState();
+        mDrawerListener.syncState();
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
         selectItem(position);
-        drawerLayout.closeDrawer(listView);
+        mDrawerLayout.closeDrawer(mListView);
     }
 
     private void selectItem(int position) {
-        listView.setItemChecked(position, true);
-        setTitle(DrawerAdapter.items[position]);
-        positionGlobal = position;
+        mListView.setItemChecked(position, true);
+        setTitle(DrawerAdapter.mDrawerItems[position]);
+        mPositionGlobal = position;
     }
 
     private void popDialog(int window) {
-        dialog = new Dialog(MainActivity.this, R.style.PauseDialog);
+        mDialog = new Dialog(MainActivity.this, R.style.PauseDialog);
 
         switch (window) {
             case Settings.TRACKER:
-                RelativeLayout trackerLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_one, null);
+                RelativeLayout trackerLayout = (RelativeLayout) mLayoutInflater.inflate(R.layout.dialog_one, null);
                 Switch trackerSwitch = (Switch) trackerLayout.findViewById(R.id.switchTracker);
-                trackerSwitch.setChecked(preferences.getBoolean("trackerPreference", true));
+                trackerSwitch.setChecked(mPreferences.getBoolean("trackerPreference", true));
                 trackerSwitch.setOnCheckedChangeListener(this);
 
                 Button trackerApplyButton = (Button) trackerLayout.findViewById(R.id.applyButtonTracker);
-                trackerEditText = (EditText) trackerLayout.findViewById(R.id.editTextTracker);
+                mTrackerCodeChangeEntry = (EditText) trackerLayout.findViewById(R.id.editTextTracker);
                 CheckBox trackerCheckbox = (CheckBox) trackerLayout.findViewById(R.id.trackerCheckbox);
-                trackerCheckbox.setChecked(preferences.getBoolean("trackerCheckboxPrefs", false));
+                trackerCheckbox.setChecked(mPreferences.getBoolean("trackerCheckboxPrefs", false));
                 trackerCheckbox.setOnCheckedChangeListener(this);
-                setOnTextChangeListenerForInputField(trackerEditText, trackerApplyButton);
-                setOnClickListenerForEditText(trackerEditText);
+                setOnTextChangeListenerForInputField(mTrackerCodeChangeEntry, trackerApplyButton);
+                setOnClickListenerForEditText(mTrackerCodeChangeEntry);
                 trackerApplyButton.setOnClickListener(this);
 
                 initiateDialog("Tracker", trackerLayout);
                 break;
             case Settings.SIREN:
-                RelativeLayout sirenLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_two, null);
+                RelativeLayout sirenLayout = (RelativeLayout) mLayoutInflater.inflate(R.layout.dialog_two, null);
                 final Switch sirenSwitch = (Switch) sirenLayout.findViewById(R.id.switchSiren);
-                sirenSwitch.setChecked(preferences.getBoolean("sirenPreference", false));
+                sirenSwitch.setChecked(mPreferences.getBoolean("sirenPreference", false));
                 sirenSwitch.setOnCheckedChangeListener(this);
 
                 Button sirenApplyButton = (Button) sirenLayout.findViewById(R.id.applyButtonSiren);
-                sirenEditText = (EditText) sirenLayout.findViewById(R.id.editTextSiren);
-                setOnTextChangeListenerForInputField(sirenEditText, sirenApplyButton);
-                setOnClickListenerForEditText(sirenEditText);
+                mSirenCodeChangeEntry = (EditText) sirenLayout.findViewById(R.id.editTextSiren);
+                setOnTextChangeListenerForInputField(mSirenCodeChangeEntry, sirenApplyButton);
+                setOnClickListenerForEditText(mSirenCodeChangeEntry);
                 sirenApplyButton.setOnClickListener(this);
 
                 initiateDialog("Siren", sirenLayout);
                 break;
             case Settings.SPEED:
-                RelativeLayout speedLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_three, null);
+                RelativeLayout speedLayout = (RelativeLayout) mLayoutInflater.inflate(R.layout.dialog_three, null);
                 final Switch speedSwitch = (Switch) speedLayout.findViewById(R.id.switchSpeed);
-                speedSwitch.setChecked(preferences.getBoolean("speedPreference", true));
+                speedSwitch.setChecked(mPreferences.getBoolean("speedPreference", true));
                 speedSwitch.setOnCheckedChangeListener(this);
 
                 Button speedApplyButton = (Button) speedLayout.findViewById(R.id.applyButtonSpeed);
-                speedEditText = (EditText) speedLayout.findViewById(R.id.editTextSpeed);
-                setOnTextChangeListenerForInputField(speedEditText, speedApplyButton);
-                setOnClickListenerForEditText(speedEditText);
+                mSpeedTrackingCodeChangeEntry = (EditText) speedLayout.findViewById(R.id.editTextSpeed);
+                setOnTextChangeListenerForInputField(mSpeedTrackingCodeChangeEntry, speedApplyButton);
+                setOnClickListenerForEditText(mSpeedTrackingCodeChangeEntry);
                 speedApplyButton.setOnClickListener(this);
 
                 initiateDialog("Speed", speedLayout);
                 break;
             case Settings.WHITELIST:
-                RelativeLayout whitelistLayout = (RelativeLayout) layoutInflater.inflate(R.layout.dialog_four, null);
+                RelativeLayout whitelistLayout = (RelativeLayout) mLayoutInflater.inflate(R.layout.dialog_four, null);
                 RadioGroup radioGroup = (RadioGroup) whitelistLayout.findViewById(R.id.radioGroup);
 
-                radioInt = preferences.getInt("radioPrefs", 0);
+                radioInt = mPreferences.getInt("radioPrefs", 0);
 
-                ma = new ContactsAdapter(getApplicationContext());
+                ContactsAdapter ma = new ContactsAdapter(getApplicationContext());
                 lv = (ListView) whitelistLayout.findViewById(R.id.lv);
 
                 if (radioInt == 0) {
@@ -220,15 +219,15 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                         switch (checkedId) {
                             case R.id.radioButtonOne:
                                 lv.setVisibility(View.GONE);
-                                preferences.edit().putInt("radioPrefs", 0).apply();
+                                mPreferences.edit().putInt("radioPrefs", 0).apply();
                                 break;
                             case R.id.radioButtonTwo:
                                 lv.setVisibility(View.GONE);
-                                preferences.edit().putInt("radioPrefs", 1).apply();
+                                mPreferences.edit().putInt("radioPrefs", 1).apply();
                                 break;
                             case R.id.radioButtonThree:
                                 lv.setVisibility(View.VISIBLE);
-                                preferences.edit().putInt("radioPrefs", 2).apply();
+                                mPreferences.edit().putInt("radioPrefs", 2).apply();
                                 break;
                         }
                     }
@@ -242,7 +241,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 initiateDialog("Whitelist", whitelistLayout);
                 break;
         }
-        positionGlobal = dummyPosition;
+        mPositionGlobal = DUMMY_POSITION;
     }
 
     private void setOnTextChangeListenerForInputField(final EditText editText, final Button button) {
@@ -295,16 +294,16 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
             case R.id.switchTracker:
-                preferences.edit().putBoolean("trackerPreference", isChecked).apply();
+                mPreferences.edit().putBoolean("trackerPreference", isChecked).apply();
             break;
             case R.id.switchSiren:
-                preferences.edit().putBoolean("sirenPreference", isChecked).apply();
+                mPreferences.edit().putBoolean("sirenPreference", isChecked).apply();
             break;
             case R.id.switchSpeed:
-                preferences.edit().putBoolean("speedPreference", isChecked).apply();
+                mPreferences.edit().putBoolean("speedPreference", isChecked).apply();
             break;
             case R.id.trackerCheckbox:
-                preferences.edit().putBoolean("trackerCheckboxPrefs", isChecked).apply();
+                mPreferences.edit().putBoolean("trackerCheckboxPrefs", isChecked).apply();
         }
     }
 
@@ -312,33 +311,33 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.applyButtonTracker:
-                trackerVariable = trackerEditText.getText().toString();
-                trackerEditText.getText().clear();
-                preferences.edit().putString("trackerVariablePrefs", trackerVariable).apply();
-                trackerSMSCode.setText("Tracker Code: " + trackerVariable);
-                dialog.dismiss();
+                trackerVariable = mTrackerCodeChangeEntry.getText().toString();
+                mTrackerCodeChangeEntry.getText().clear();
+                mPreferences.edit().putString("trackerVariablePrefs", trackerVariable).apply();
+                mTrackerSmsCodeLabel.setText("Tracker Code: " + trackerVariable);
+                mDialog.dismiss();
             break;
             case R.id.applyButtonSiren:
-                sirenVariable = sirenEditText.getText().toString();
-                sirenEditText.getText().clear();
-                preferences.edit().putString("sirenVariablePrefs", sirenVariable).apply();
-                sirenSMSCode.setText("Siren Code: " + sirenVariable);
-                dialog.dismiss();
+                sirenVariable = mSirenCodeChangeEntry.getText().toString();
+                mSirenCodeChangeEntry.getText().clear();
+                mPreferences.edit().putString("sirenVariablePrefs", sirenVariable).apply();
+                mSirenSmsCodeLabel.setText("Siren Code: " + sirenVariable);
+                mDialog.dismiss();
             break;
             case R.id.applyButtonSpeed:
-                speedVariable = speedEditText.getText().toString();
-                speedEditText.getText().clear();
-                preferences.edit().putString("speedVariablePrefs", speedVariable).apply();
-                speedSMSCode.setText("Speed Code: " + speedVariable);
-                dialog.dismiss();
+                speedVariable = mSpeedTrackingCodeChangeEntry.getText().toString();
+                mSpeedTrackingCodeChangeEntry.getText().clear();
+                mPreferences.edit().putString("speedVariablePrefs", speedVariable).apply();
+                mSpeedTrackerSmsCodeLabel.setText("Speed Code: " + speedVariable);
+                mDialog.dismiss();
             break;
         }
     }
 
     private void initiateDialog(String title, RelativeLayout layout) {
-        dialog.setTitle(title);
-        dialog.setContentView(layout);
-        dialog.show();
+        mDialog.setTitle(title);
+        mDialog.setContentView(layout);
+        mDialog.show();
     }
 
     @Override
@@ -353,19 +352,19 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 (getApplicationContext());
 
         if (googlePlayServicesAvailable != ConnectionResult.SUCCESS) {
-            topInfoMainLayout.setVisibility(View.GONE);
-            trackerSMSCode.setVisibility(View.GONE);
-            sirenSMSCode.setVisibility(View.GONE);
-            speedSMSCode.setVisibility(View.GONE);
+            mTopInfoMainLayout.setVisibility(View.GONE);
+            mTrackerSmsCodeLabel.setVisibility(View.GONE);
+            mSirenSmsCodeLabel.setVisibility(View.GONE);
+            mSpeedTrackerSmsCodeLabel.setVisibility(View.GONE);
 
             warningGooglePlayservices.setVisibility(View.VISIBLE);
         } else {
             warningGooglePlayservices.setVisibility(View.GONE);
 
-            topInfoMainLayout.setVisibility(View.VISIBLE);
-            trackerSMSCode.setVisibility(View.VISIBLE);
-            sirenSMSCode.setVisibility(View.VISIBLE);
-            speedSMSCode.setVisibility(View.VISIBLE);
+            mTopInfoMainLayout.setVisibility(View.VISIBLE);
+            mTrackerSmsCodeLabel.setVisibility(View.VISIBLE);
+            mSirenSmsCodeLabel.setVisibility(View.VISIBLE);
+            mSpeedTrackerSmsCodeLabel.setVisibility(View.VISIBLE);
         }
 
         warningGooglePlayservices.setOnClickListener(new View.OnClickListener() {

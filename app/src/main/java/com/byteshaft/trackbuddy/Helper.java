@@ -122,8 +122,8 @@ public class Helper extends ContextWrapper {
             editor.apply();
 
             activity.gpsSettingsCheckbox = (CheckBox) activity.findViewById(R.id.checkbox);
-            activity.okButton = (Button) activity.findViewById(R.id.okButton);
-            activity.okButton.setOnTouchListener(new View.OnTouchListener(){
+            activity.sButtonOk = (Button) activity.findViewById(R.id.okButton);
+            activity.sButtonOk.setOnTouchListener(new View.OnTouchListener(){
 
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
