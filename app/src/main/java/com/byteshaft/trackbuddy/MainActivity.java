@@ -43,7 +43,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     private Dialog mDialog;
     CheckBox gpsSettingsCheckbox;
     View topLevelLayout, gpsSettingsLayout;
-    private RelativeLayout warningGooglePlayservices;
+    private RelativeLayout warningGooglePlayServices;
     private ListView lv;
     int mPositionGlobal = -1;
     final int DUMMY_POSITION = -1;
@@ -55,7 +55,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         final static int TRACKER = 0;
         final static int SIREN = 1;
         final static int SPEED = 2;
-        final static int WHITELIST = 3;
+        final static int WHITE_LIST = 3;
     }
     
     @Override
@@ -88,7 +88,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         mSpeedTrackerSmsCodeLabel.setText("Speed Code: " + speedVariable);
 
         mTopInfoMainLayout = (TextView) findViewById(R.id.topInfo);
-        warningGooglePlayservices = (RelativeLayout) findViewById(R.id.playservices_layout);
+        warningGooglePlayServices = (RelativeLayout) findViewById(R.id.playservices_layout);
 
         DrawerAdapter myAdapter = new DrawerAdapter(this);
 
@@ -194,7 +194,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
 
                 initiateDialog("Speed", speedLayout);
                 break;
-            case Settings.WHITELIST:
+            case Settings.WHITE_LIST:
                 RelativeLayout whitelistLayout = (RelativeLayout) mLayoutInflater.inflate(R.layout.dialog_four, null);
                 RadioGroup radioGroup = (RadioGroup) whitelistLayout.findViewById(R.id.radioGroup);
 
@@ -357,9 +357,9 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
             mSirenSmsCodeLabel.setVisibility(View.GONE);
             mSpeedTrackerSmsCodeLabel.setVisibility(View.GONE);
 
-            warningGooglePlayservices.setVisibility(View.VISIBLE);
+            warningGooglePlayServices.setVisibility(View.VISIBLE);
         } else {
-            warningGooglePlayservices.setVisibility(View.GONE);
+            warningGooglePlayServices.setVisibility(View.GONE);
 
             mTopInfoMainLayout.setVisibility(View.VISIBLE);
             mTrackerSmsCodeLabel.setVisibility(View.VISIBLE);
@@ -367,7 +367,7 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
             mSpeedTrackerSmsCodeLabel.setVisibility(View.VISIBLE);
         }
 
-        warningGooglePlayservices.setOnClickListener(new View.OnClickListener() {
+        warningGooglePlayServices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();

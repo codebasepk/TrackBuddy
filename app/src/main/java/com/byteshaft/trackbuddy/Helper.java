@@ -147,7 +147,7 @@ public class Helper extends ContextWrapper {
     }
 
     List<String> getAllContactNames() {
-        List<String> contactNames = new ArrayList<String>();
+        List<String> contactNames = new ArrayList<>();
         Cursor cursor = getAllContacts(getContentResolver());
         while (cursor.moveToNext()) {
             String name = cursor.getString(
@@ -159,7 +159,7 @@ public class Helper extends ContextWrapper {
     }
 
     List<String> getAllContactNumbers() {
-        List<String> contactNumbers = new ArrayList<String>();
+        List<String> contactNumbers = new ArrayList<>();
         Cursor cursor = getAllContacts(getContentResolver());
         while (cursor.moveToNext()) {
             String number = cursor.getString(
