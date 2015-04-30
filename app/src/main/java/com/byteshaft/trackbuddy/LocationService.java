@@ -23,7 +23,7 @@ public class LocationService extends ContextWrapper implements LocationListener,
 
     private static final long INTERVAL = 0;
     private static final long FASTEST_INTERVAL = 0;
-    private Helper mHelpers = null;
+    private Helper mHelpers;
     private GoogleApiClient mGoogleApiClient;
     private String address;
 

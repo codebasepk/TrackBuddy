@@ -14,8 +14,8 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 
 public class SMSManager extends BroadcastReceiver {
 
-    private SmsMessage message = null;
-    private Context mContext = null;
+    private SmsMessage message;
+    private Context mContext;
     private LocationService gps;
     static String originatingAddress;
     private SharedPreferences preferences;
