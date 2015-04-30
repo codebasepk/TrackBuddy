@@ -17,7 +17,6 @@ import com.google.android.gms.location.LocationListener;
 
 import java.util.List;
 
-
 public class LocationService extends ContextWrapper implements LocationListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 

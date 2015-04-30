@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import java.util.List;
 
-
 public class ContactsAdapter extends BaseAdapter implements CompoundButton.OnCheckedChangeListener {
 
     static SparseBooleanArray mCheckStates;
