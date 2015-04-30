@@ -195,5 +195,4 @@ public class Helper extends ContextWrapper {
     private String[] getCheckedContacts(String checkedContacts) {
         return checkedContacts.split(",");
     }
-
 }

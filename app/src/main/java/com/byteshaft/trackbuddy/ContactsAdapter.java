@@ -95,5 +95,4 @@ public class ContactsAdapter extends BaseAdapter implements CompoundButton.OnChe
         String string = mPreferences.getString("checkedContactsPrefs", " ");
         return string.split(",");
     }
-
 }
