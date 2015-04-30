@@ -19,7 +19,6 @@ public class ContactsAdapter extends BaseAdapter implements CompoundButton.OnChe
     static SparseBooleanArray mCheckStates;
     private LayoutInflater mInflater;
     private SharedPreferences mPreferences;
-
     private List<String> mContactNames;
     private List<String> mContactNumbers;
 

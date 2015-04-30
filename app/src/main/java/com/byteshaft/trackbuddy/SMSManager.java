@@ -13,15 +13,15 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 
 public class SMSManager extends BroadcastReceiver {
 
+    static boolean sTrackerCheckbox;
+    static String sOriginatingAddress;
     private SmsMessage mMessage;
     private Context mContext;
-    static String sOriginatingAddress;
     private SharedPreferences mPreferences;
     private Helper mHelpers;
     private boolean mTrackerEnabled;
     private boolean mSirenEnabled;
     private boolean mSpeedTrackingEnabled;
-    static boolean sTrackerCheckbox;
     private int mArePlayServicesAvailable;
 
     @Override

@@ -9,9 +9,9 @@ import android.widget.ImageView;
 
 class DrawerAdapter extends BaseAdapter {
 
+    static String[] mDrawerItems;
     private Context mContext;
     private int[] mDrawerItemsIcons = {R.drawable.ic_tracker, R.drawable.ic_siren, R.drawable.ic_speed, R.drawable.ic_list};
-    static String[] mDrawerItems;
 
     public DrawerAdapter(Context context) {
         mContext = context;

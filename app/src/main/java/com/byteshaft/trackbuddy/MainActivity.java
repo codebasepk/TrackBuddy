@@ -31,23 +31,22 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 public class MainActivity extends ActionBarActivity implements ListView.OnItemClickListener,
         Switch.OnCheckedChangeListener, Button.OnClickListener {
 
+    static int radioInt;
+    Button sButtonOk;
+    CheckBox gpsSettingsCheckbox;
+    View topLevelLayout, gpsSettingsLayout;
     private DrawerLayout mDrawerLayout;
     private ListView mListView;
     private ActionBarDrawerToggle mDrawerListener;
-
-    Button sButtonOk;
     private EditText mTrackerCodeChangeEntry, mSirenCodeChangeEntry, mSpeedTrackingCodeChangeEntry;
     private TextView mTrackerSmsCodeLabel, mSirenSmsCodeLabel, mSpeedTrackerSmsCodeLabel, mTopInfoMainLayout;
     private SharedPreferences mPreferences;
     private String trackerVariable, sirenVariable, speedVariable;
     private Dialog mDialog;
-    CheckBox gpsSettingsCheckbox;
-    View topLevelLayout, gpsSettingsLayout;
     private RelativeLayout warningGooglePlayServices;
     private ListView lv;
     int mPositionGlobal = -1;
     final int DUMMY_POSITION = -1;
-    static int radioInt;
 
     private LayoutInflater mLayoutInflater;
     

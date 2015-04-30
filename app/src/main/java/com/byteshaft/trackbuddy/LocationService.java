@@ -20,18 +20,15 @@ import java.util.List;
 public class LocationService extends ContextWrapper implements LocationListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    static double speed = 0.0;
     private final long INTERVAL = 0;
     private final long FASTEST_INTERVAL = 0;
     private Helper mHelpers;
     private GoogleApiClient mGoogleApiClient;
     private String mAddress;
-
     private int mSpeedRecursionCounter = 0;
     private int mLocationRecursionCounter = 0;
     private int mLocationChangedCounter = 0;
-
-    static double speed = 0.0;
-
     private LocationRequest mLocationRequest;
     private Location mLocation;
 

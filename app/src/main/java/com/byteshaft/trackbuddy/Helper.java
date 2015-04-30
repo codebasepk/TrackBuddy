@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Helper extends ContextWrapper {
+
     public Helper(Context base) {
         super(base);
     }
