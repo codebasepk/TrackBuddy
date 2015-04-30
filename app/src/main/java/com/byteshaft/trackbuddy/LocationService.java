@@ -21,8 +21,6 @@ public class LocationService extends ContextWrapper implements LocationListener,
         GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     static double speed = 0.0;
-    private final long INTERVAL = 0;
-    private final long FASTEST_INTERVAL = 0;
     private Helper mHelpers;
     private GoogleApiClient mGoogleApiClient;
     private String mAddress;
@@ -154,6 +152,8 @@ public class LocationService extends ContextWrapper implements LocationListener,
     }
 
     protected void createLocationRequest() {
+        long INTERVAL = 0;
+        long FASTEST_INTERVAL = 0;
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
