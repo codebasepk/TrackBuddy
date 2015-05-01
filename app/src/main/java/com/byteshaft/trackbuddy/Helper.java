@@ -26,8 +26,8 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Helper extends ContextWrapper {
+
     public Helper(Context base) {
         super(base);
     }
@@ -122,8 +122,8 @@ public class Helper extends ContextWrapper {
             editor.apply();
 
             activity.gpsSettingsCheckbox = (CheckBox) activity.findViewById(R.id.checkbox);
-            activity.okButton = (Button) activity.findViewById(R.id.okButton);
-            activity.okButton.setOnTouchListener(new View.OnTouchListener(){
+            activity.sButtonOk = (Button) activity.findViewById(R.id.okButton);
+            activity.sButtonOk.setOnTouchListener(new View.OnTouchListener(){
 
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -147,7 +147,7 @@ public class Helper extends ContextWrapper {
     }
 
     List<String> getAllContactNames() {
-        List<String> contactNames = new ArrayList<String>();
+        List<String> contactNames = new ArrayList<>();
         Cursor cursor = getAllContacts(getContentResolver());
         while (cursor.moveToNext()) {
             String name = cursor.getString(
@@ -159,7 +159,7 @@ public class Helper extends ContextWrapper {
     }
 
     List<String> getAllContactNumbers() {
-        List<String> contactNumbers = new ArrayList<String>();
+        List<String> contactNumbers = new ArrayList<>();
         Cursor cursor = getAllContacts(getContentResolver());
         while (cursor.moveToNext()) {
             String number = cursor.getString(
@@ -195,5 +195,4 @@ public class Helper extends ContextWrapper {
     private String[] getCheckedContacts(String checkedContacts) {
         return checkedContacts.split(",");
     }
-
 }
