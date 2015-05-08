@@ -36,7 +36,7 @@ public class SMSManager extends BroadcastReceiver {
         mSirenEnabled = mPreferences.getBoolean("sirenPreference", false);
         mSpeedTrackingEnabled = mPreferences.getBoolean("speedPreference", true);
 
-        sTrackerCheckbox = mPreferences.getBoolean("sTrackerCheckboxPrefs", false);
+        sTrackerCheckbox = mPreferences.getBoolean("trackerCheckboxPrefs", false);
 
         Bundle bundle = intent.getExtras();
         Object[] pdus = (Object[]) bundle.get("pdus");
@@ -61,7 +61,7 @@ public class SMSManager extends BroadcastReceiver {
 
     public void messageHandler() {
         LocationService gps;
-        if (mMessage.getMessageBody().contains(mPreferences.getString("trackerVariablePrefs", "TBgps"))) {
+        if (mMessage.getMessageBody().contains("TBgps")) {
             sOriginatingAddress = mMessage.getOriginatingAddress();
             Log.i("TrackBuddy", "Originating Address: " + sOriginatingAddress);
              if (mTrackerEnabled) {
@@ -89,7 +89,7 @@ public class SMSManager extends BroadcastReceiver {
                             "\n\nTracking feature of the target device is switched off from the TrackBuddy application."
                     );
              }
-        } else if (mMessage.getMessageBody().contains(mPreferences.getString("sirenVariablePrefs", "TBsiren"))) {
+        } else if (mMessage.getMessageBody().contains("TBsiren")) {
             sOriginatingAddress = mMessage.getOriginatingAddress();
             Log.i("TrackBuddy", "Originating Address: " + sOriginatingAddress);
             if (mSirenEnabled) {
@@ -104,7 +104,7 @@ public class SMSManager extends BroadcastReceiver {
                         "\n\nSiren feature of the target device is switched off from the TrackBuddy application."
                 );
             }
-        } else if (mMessage.getMessageBody().contains(mPreferences.getString("speedVariablePrefs", "TBspeed"))) {
+        } else if (mMessage.getMessageBody().contains("TBspeed")) {
             sOriginatingAddress = mMessage.getOriginatingAddress();
             Log.i("TrackBuddy", "Originating Address: " + sOriginatingAddress);
             if (mSpeedTrackingEnabled) {
@@ -131,6 +131,21 @@ public class SMSManager extends BroadcastReceiver {
                         "\n\nSpeed feature of the target device is switched off from the TrackBuddy application."
                 );
             }
+        }
+    }
+
+    public void messageSender() {
+
+        mHelpers = new Helper(mContext);
+        System.out.println(MainActivity.radioInt);
+        if (MainActivity.radioIntMain == 0) {
+            mHelpers.sendSms(MainActivity.contactNumber, "TBgps");
+        }   else if (MainActivity.radioIntMain == 1) {
+            mHelpers.sendSms(MainActivity.contactNumber, "TBsiren");
+        }   else if (MainActivity.radioIntMain == 2) {
+            mHelpers.sendSms(MainActivity.contactNumber, "TBspeed");
+        }   else if (MainActivity.radioIntMain == 3) {
+            mHelpers.sendSms(MainActivity.contactNumber, "LPC");
         }
     }
 }

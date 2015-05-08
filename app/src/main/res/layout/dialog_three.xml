@@ -24,32 +24,9 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/switchSpeed"/>
 
-    <EditText
-        android:layout_marginTop="15dp"
-        android:layout_width="230dp"
-        android:layout_height="40dp"
-        android:longClickable="false"
-        android:inputType="textVisiblePassword"
-        android:maxLength="10"
-        android:layout_below="@+id/switchSpeed"
-        android:layout_centerHorizontal="true"
-        android:hint="Tap to change Speed Code."
-        android:textSize="14dp"
-        android:id="@+id/editTextSpeed"/>
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Apply"
-        android:id="@+id/applyButtonSpeed"
-        android:layout_below="@+id/editTextSpeed"
-        android:layout_alignRight="@+id/editTextSpeed"
-        android:layout_alignEnd="@+id/editTextSpeed"
-        android:enabled="false"/>
 
     <TextView
-        android:layout_below="@+id/applyButtonSpeed"
+        android:layout_below="@+id/switchSpeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
