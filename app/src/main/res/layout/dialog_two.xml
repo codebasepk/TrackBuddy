@@ -25,32 +25,8 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/switchSiren"/>
 
-    <EditText
-        android:layout_marginTop="15dp"
-        android:layout_width="230dp"
-        android:layout_height="40dp"
-        android:longClickable="false"
-        android:inputType="textVisiblePassword"
-        android:maxLength="10"
-        android:layout_below="@+id/switchSiren"
-        android:layout_centerHorizontal="true"
-        android:hint="Tap to change Siren Code."
-        android:textSize="14dp"
-        android:id="@+id/editTextSiren"/>
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Apply"
-        android:id="@+id/applyButtonSiren"
-        android:layout_below="@+id/editTextSiren"
-        android:layout_alignRight="@+id/editTextSiren"
-        android:layout_alignEnd="@+id/editTextSiren"
-        android:enabled="false"/>
-
     <TextView
-        android:layout_below="@+id/applyButtonSiren"
+        android:layout_below="@+id/switchSiren"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"

@@ -9,8 +9,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,28 +21,27 @@ import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
-import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 public class MainActivity extends ActionBarActivity implements ListView.OnItemClickListener,
-        Switch.OnCheckedChangeListener, Button.OnClickListener {
+        Switch.OnCheckedChangeListener {
 
-    static int radioInt;
-    Button sButtonOk;
+    static int radioIntMain = 0, radioInt;
+    static String contactNumber;
+    Button sButtonOk, mainSendButton;
     CheckBox gpsSettingsCheckbox;
     View topLevelLayout, gpsSettingsLayout;
     private DrawerLayout mDrawerLayout;
     private ListView mListView;
     private ActionBarDrawerToggle mDrawerListener;
-    private EditText mTrackerCodeChangeEntry, mSirenCodeChangeEntry, mSpeedTrackingCodeChangeEntry;
-    private TextView mTrackerSmsCodeLabel, mSirenSmsCodeLabel, mSpeedTrackerSmsCodeLabel, mTopInfoMainLayout;
     private SharedPreferences mPreferences;
-    private String trackerVariable, sirenVariable, speedVariable;
     private Dialog mDialog;
     private RelativeLayout warningGooglePlayServices;
     private ListView lv;
+    private RadioGroup radioGroup, radioGroupTwo;
+    private EditText mEditText;
     int mPositionGlobal = -1;
     final int DUMMY_POSITION = -1;
 
@@ -61,10 +58,8 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportActionBar().setTitle("Home");
-        Helper mHelpers = new Helper(this);
-
-
+        final Helper mHelpers = new Helper(this);
+        final SMSManager mSMSManager = new SMSManager();
 
         mPreferences = mHelpers.getPreferenceManager();
 
@@ -74,23 +69,22 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
 
         mLayoutInflater = getLayoutInflater();
 
-        trackerVariable = mPreferences.getString("trackerVariablePrefs", "TBgps");
-        mTrackerSmsCodeLabel = (TextView) findViewById(R.id.trackerSMSCode);
-        mTrackerSmsCodeLabel.setText("Tracker Code: " + trackerVariable);
-
-        sirenVariable = mPreferences.getString("sirenVariablePrefs", "TBsiren");
-        mSirenSmsCodeLabel = (TextView) findViewById(R.id.sirenSMSCode);
-        mSirenSmsCodeLabel.setText("Siren Code: " + sirenVariable);
-
-        speedVariable = mPreferences.getString("speedVariablePrefs", "TBspeed");
-        mSpeedTrackerSmsCodeLabel = (TextView) findViewById(R.id.speedSMSCode);
-        mSpeedTrackerSmsCodeLabel.setText("Speed Code: " + speedVariable);
-
-        mTopInfoMainLayout = (TextView) findViewById(R.id.topInfo);
         warningGooglePlayServices = (RelativeLayout) findViewById(R.id.playservices_layout);
+        mEditText = (EditText) findViewById(R.id.mainEditText);
+        mainSendButton = (Button) findViewById(R.id.main_send_button);
+
+        mainSendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               contactNumber =  mEditText.getText().toString();
+                System.out.println(contactNumber);
+                mSMSManager.messageSender();
+            }
+        });
 
         DrawerAdapter myAdapter = new DrawerAdapter(this);
 
+        radioGroupTwo = (RadioGroup) findViewById(R.id.radio_group_two);
         mListView = (ListView) findViewById(R.id.drawer_list);
         mListView.setAdapter(myAdapter);
         mListView.setOnItemClickListener(this);
@@ -112,6 +106,27 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        radioGroupTwo.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.main_radio_button_one:
+                        radioIntMain = 0;
+                        System.out.println("YOYOYOYYO");
+                        break;
+                    case R.id.main_radio_button_two:
+                        radioIntMain = 1;
+                        break;
+                    case R.id.main_radio_button_three:
+                        radioIntMain = 2;
+                        break;
+                    case R.id.main_radio_button_four:
+                        radioIntMain = 3;
+                        break;
+                }
+            }
+        });
     }
 
     @Override
@@ -154,14 +169,9 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 trackerSwitch.setChecked(mPreferences.getBoolean("trackerPreference", true));
                 trackerSwitch.setOnCheckedChangeListener(this);
 
-                Button trackerApplyButton = (Button) trackerLayout.findViewById(R.id.applyButtonTracker);
-                mTrackerCodeChangeEntry = (EditText) trackerLayout.findViewById(R.id.editTextTracker);
                 CheckBox trackerCheckbox = (CheckBox) trackerLayout.findViewById(R.id.trackerCheckbox);
                 trackerCheckbox.setChecked(mPreferences.getBoolean("trackerCheckboxPrefs", false));
                 trackerCheckbox.setOnCheckedChangeListener(this);
-                setOnTextChangeListenerForInputField(mTrackerCodeChangeEntry, trackerApplyButton);
-                setOnClickListenerForEditText(mTrackerCodeChangeEntry);
-                trackerApplyButton.setOnClickListener(this);
 
                 initiateDialog("Tracker", trackerLayout);
                 break;
@@ -171,12 +181,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 sirenSwitch.setChecked(mPreferences.getBoolean("sirenPreference", false));
                 sirenSwitch.setOnCheckedChangeListener(this);
 
-                Button sirenApplyButton = (Button) sirenLayout.findViewById(R.id.applyButtonSiren);
-                mSirenCodeChangeEntry = (EditText) sirenLayout.findViewById(R.id.editTextSiren);
-                setOnTextChangeListenerForInputField(mSirenCodeChangeEntry, sirenApplyButton);
-                setOnClickListenerForEditText(mSirenCodeChangeEntry);
-                sirenApplyButton.setOnClickListener(this);
-
                 initiateDialog("Siren", sirenLayout);
                 break;
             case Settings.SPEED:
@@ -185,17 +189,11 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
                 speedSwitch.setChecked(mPreferences.getBoolean("speedPreference", true));
                 speedSwitch.setOnCheckedChangeListener(this);
 
-                Button speedApplyButton = (Button) speedLayout.findViewById(R.id.applyButtonSpeed);
-                mSpeedTrackingCodeChangeEntry = (EditText) speedLayout.findViewById(R.id.editTextSpeed);
-                setOnTextChangeListenerForInputField(mSpeedTrackingCodeChangeEntry, speedApplyButton);
-                setOnClickListenerForEditText(mSpeedTrackingCodeChangeEntry);
-                speedApplyButton.setOnClickListener(this);
-
                 initiateDialog("Speed", speedLayout);
                 break;
             case Settings.WHITE_LIST:
                 RelativeLayout whitelistLayout = (RelativeLayout) mLayoutInflater.inflate(R.layout.dialog_four, null);
-                RadioGroup radioGroup = (RadioGroup) whitelistLayout.findViewById(R.id.radioGroup);
+                radioGroup = (RadioGroup) whitelistLayout.findViewById(R.id.radioGroup);
 
                 radioInt = mPreferences.getInt("radioPrefs", 0);
 
@@ -243,52 +241,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         mPositionGlobal = DUMMY_POSITION;
     }
 
-    private void setOnTextChangeListenerForInputField(final EditText editText, final Button button) {
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (editText.getText().toString().isEmpty()) {
-                    button.setEnabled(false);
-                } else {
-                    button.setEnabled(true);
-                }
-                if (editText.getText().toString().equals("TB")) {
-                    return;
-                }
-                if (editText.getText().toString().isEmpty() || editText.getText().toString().equals("T")) {
-                    editText.setText("TB");
-                    editText.setSelection(editText.getText().length());
-                }
-            }
-            @Override
-            public void afterTextChanged(Editable s) {
-                String result = s.toString().replaceAll(" ", "");
-                    if(!s.toString().equals(result)) {
-                        editText.setText(result);
-                        editText.setSelection(result.length());
-                    }
-            }
-        });
-    }
-
-    private void setOnClickListenerForEditText(final EditText editText) {
-        editText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (editText.getText().toString().isEmpty() || editText.getText().toString().equals("T")) {
-                    editText.setText("TB");
-                    editText.setSelection(editText.getText().length());
-                } else {
-                    editText.setSelection(editText.getText().length());
-                }
-            }
-        });
-    }
-
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
@@ -306,33 +258,6 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.applyButtonTracker:
-                trackerVariable = mTrackerCodeChangeEntry.getText().toString();
-                mTrackerCodeChangeEntry.getText().clear();
-                mPreferences.edit().putString("trackerVariablePrefs", trackerVariable).apply();
-                mTrackerSmsCodeLabel.setText("Tracker Code: " + trackerVariable);
-                mDialog.dismiss();
-            break;
-            case R.id.applyButtonSiren:
-                sirenVariable = mSirenCodeChangeEntry.getText().toString();
-                mSirenCodeChangeEntry.getText().clear();
-                mPreferences.edit().putString("sirenVariablePrefs", sirenVariable).apply();
-                mSirenSmsCodeLabel.setText("Siren Code: " + sirenVariable);
-                mDialog.dismiss();
-            break;
-            case R.id.applyButtonSpeed:
-                speedVariable = mSpeedTrackingCodeChangeEntry.getText().toString();
-                mSpeedTrackingCodeChangeEntry.getText().clear();
-                mPreferences.edit().putString("speedVariablePrefs", speedVariable).apply();
-                mSpeedTrackerSmsCodeLabel.setText("Speed Code: " + speedVariable);
-                mDialog.dismiss();
-            break;
-        }
-    }
-
     private void initiateDialog(String title, RelativeLayout layout) {
         mDialog.setTitle(title);
         mDialog.setContentView(layout);
@@ -346,26 +271,14 @@ public class MainActivity extends ActionBarActivity implements ListView.OnItemCl
     }
 
     public void showGooglePlayServicesError() {
-
         int googlePlayServicesAvailable = GooglePlayServicesUtil.isGooglePlayServicesAvailable
                 (getApplicationContext());
 
         if (googlePlayServicesAvailable != ConnectionResult.SUCCESS) {
-            mTopInfoMainLayout.setVisibility(View.GONE);
-            mTrackerSmsCodeLabel.setVisibility(View.GONE);
-            mSirenSmsCodeLabel.setVisibility(View.GONE);
-            mSpeedTrackerSmsCodeLabel.setVisibility(View.GONE);
-
             warningGooglePlayServices.setVisibility(View.VISIBLE);
         } else {
             warningGooglePlayServices.setVisibility(View.GONE);
-
-            mTopInfoMainLayout.setVisibility(View.VISIBLE);
-            mTrackerSmsCodeLabel.setVisibility(View.VISIBLE);
-            mSirenSmsCodeLabel.setVisibility(View.VISIBLE);
-            mSpeedTrackerSmsCodeLabel.setVisibility(View.VISIBLE);
         }
-
         warningGooglePlayServices.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
