@@ -26,18 +26,42 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/switchTracker"/>
 
+    <EditText
+        android:layout_marginTop="10dp"
+        android:layout_width="230dp"
+        android:layout_height="40dp"
+        android:longClickable="false"
+        android:inputType="textVisiblePassword"
+        android:maxLength="10"
+        android:layout_below="@+id/switchTracker"
+        android:layout_centerHorizontal="true"
+        android:hint="Tap to change Tracking Code."
+        android:textSize="14dp"
+        android:id="@+id/editTextTracker"/>
+
     <CheckBox
         android:id="@+id/trackerCheckbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/switchTracker"
+        android:layout_below="@+id/editTextTracker"
         android:layout_centerHorizontal="true"
         android:text="Address Reporting (Requires Internet)"
         android:textSize="11dp"
         android:textColor="#0099CC"/>
 
-    <TextView
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Apply"
+        android:id="@+id/applyButtonTracker"
         android:layout_below="@+id/trackerCheckbox"
+        android:layout_alignRight="@+id/editTextTracker"
+        android:layout_alignEnd="@+id/editTextTracker"
+        android:enabled="false"/>
+
+    <TextView
+        android:layout_below="@+id/applyButtonTracker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
