@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
 
     <TextView
         android:id="@+id/textView1"
@@ -38,5 +38,7 @@
         android:layout_marginRight="22dp"
         android:padding="5dp"
         android:layout_marginTop="5dp"/>
+
+
 
 </RelativeLayout>
